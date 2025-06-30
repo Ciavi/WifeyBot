@@ -1,33 +1,72 @@
-import enum
+import discord
 
-from dotenv import load_dotenv
-from neo4j import GraphDatabase
-from os import environ as env
-
-driver = GraphDatabase.driver(env['NEO4J_URI'], auth=(env['NEO4J_USER'], env['NEO4J_PASS']))
+from data.models import User
 
 
-def __raw_add_user(tx, user_id, user_name):
-    tx.run("CREATE (n:User {user_id: $user_id; user_name: $user_name})", user_id=user_id, user_name=user_name)
+async def read_or_create_user(user_id: int, **kwargs):
+    dict_param = { 'user_id': user_id }
+    dict_param.update(kwargs)
+
+    record: list[User] = await User.get_or_create(dict_param)
+
+    return record[0]
 
 
-def add_user(user_id: int, user_name: str):
-    with driver.session() as session:
-        session.execute_write(__raw_add_user, user_id, user_name)
-        driver.close()
+async def update_or_create_user(user_id: int, **kwargs):
+    dict_param = {'user_id': user_id }
+    dict_param.update(kwargs)
+
+    record: list[User] = await User.create_or_update(dict_param)
+
+    return record[0]
 
 
-class Relation(enum.Enum):
-    Partner = "PARTNER_OF"
-    Child = "CHILD_OF"
-
-def __raw_add_relation(tx, user_id_l, user_id_r, relation):
-    tx.run("MATCH (l:User {user_id: $user_id_l}), (r:User {user_id: $user_id_r}) "
-           "MERGE (l)-[e:$relation]->(r) "
-           "RETURN type(r)", user_id_l=user_id_l, user_id_r=user_id_r, relation=relation)
+async def delete_user(user_id: int):
+    await User.nodes.delete(user_id=user_id)
 
 
-def add_relation(user_id_l: int, user_id_r: int, relation: Relation):
-    with driver.session() as session:
-        session.execute_write(__raw_add_relation, user_id_l, user_id_r, relation)
-        driver.close()
+async def u_marry(invoker: discord.User | discord.Member, target: discord.User | discord.Member):
+    d_invoker: User = await update_or_create_user(user_id=invoker.id, user_name=invoker.name)
+    d_target: User = await update_or_create_user(user_id=target.id, user_name=target.name)
+
+    rel = await d_invoker.partners.connect(d_target)
+    print(rel)
+
+
+async def u_divorce(invoker: discord.User | discord.Member, target: discord.User | discord.Member):
+    d_invoker: User = await update_or_create_user(user_id=invoker.id, user_name=invoker.name)
+    d_target: User = await update_or_create_user(user_id=target.id, user_name=target.name)
+
+    rel = await d_invoker.partners.disconnect(d_target)
+    print(rel)
+
+
+async def u_adopt(invoker: discord.User | discord.Member, target: discord.User | discord.Member):
+    d_invoker: User = await update_or_create_user(user_id=invoker.id, user_name=invoker.name)
+    d_target: User = await update_or_create_user(user_id=target.id, user_name=target.name)
+
+    rel_a = await d_invoker.children.connect(d_target)
+    rel_b = await d_target.parent.connect(d_invoker)
+    print(rel_a)
+    print(rel_b)
+
+
+async def u_abandon(invoker: discord.User | discord.Member, target: discord.User | discord.Member):
+    d_invoker: User = await update_or_create_user(user_id=invoker.id, user_name=invoker.name)
+    d_target: User = await update_or_create_user(user_id=target.id, user_name=target.name)
+
+    rel_a = await d_invoker.children.disconnect(d_target)
+    rel_b = await d_target.parent.disconnect(d_invoker)
+    print(rel_a)
+    print(rel_b)
+
+
+async def u_emancipate(invoker: discord.User | discord.Member):
+    d_invoker: User = await update_or_create_user(user_id=invoker.id, user_name=invoker.name)
+    d_target: User = await d_invoker.parent.end_node()
+
+    rel_a = await d_invoker.children.disconnect(d_target)
+    rel_b = await d_target.parent.disconnect(d_invoker)
+    print(rel_a)
+    print(rel_b)
+
