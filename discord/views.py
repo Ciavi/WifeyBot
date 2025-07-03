@@ -140,7 +140,9 @@ class MarryView(BaseView):
 
         self.add_item(discord.ui.Button(label="Yes!", style=discord.ButtonStyle.success, custom_id=f"yes:{invoker.id}"))
         self.add_item(discord.ui.Button(label="No :(", style=discord.ButtonStyle.danger, custom_id=f"no:{invoker.id}"))
-        self.children[-1].callback = self.callback
+
+        for child in self.children:
+            child.callback = self.callback
 
         self.exit()
 

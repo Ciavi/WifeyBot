@@ -1,7 +1,6 @@
-from datetime import datetime
 from dotenv import load_dotenv
 from neomodel import IntegerProperty, StringProperty, DateTimeProperty, AsyncStructuredRel, \
-    AsyncStructuredNode, AsyncRelationshipTo, AsyncRelationshipFrom, AsyncRelationship, config
+    AsyncStructuredNode, AsyncRelationshipTo, AsyncRelationshipFrom, AsyncRelationship, config, AsyncZeroOrOne
 from os import environ as env
 
 load_dotenv()
@@ -10,7 +9,7 @@ config.DATABASE_URL = env['NEO4J_URI']
 
 class ProperRelationship(AsyncStructuredRel):
     since = DateTimeProperty(
-        default = lambda : datetime.now(),
+        default_now = True,
         index = True
     )
 
@@ -22,5 +21,5 @@ class User(AsyncStructuredNode):
     partners = AsyncRelationship('User', 'PARTNER', model=ProperRelationship)
 
     children = AsyncRelationshipTo('User', 'CHILD', model=ProperRelationship)
-    parent = AsyncRelationshipFrom('User', 'CHILD', model=ProperRelationship)
+    parent = AsyncRelationshipFrom('User', 'PARENT', model=ProperRelationship, cardinality=AsyncZeroOrOne)
 

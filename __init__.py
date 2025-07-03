@@ -1,7 +1,9 @@
 import logging
+import os
 
 import discord
-from discord import app_commands, Interaction, Member, Embed, Colour
+import time
+from discord import app_commands, Interaction, Member, Embed, Colour, File
 
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -9,7 +11,8 @@ from os import environ as env
 
 import system.configuration
 import system.historian
-from data.interface import u_marry, read_or_create_user, u_divorce, u_emancipate, u_abandon, u_adopt
+from data.interface import u_marry, read_or_create_user, u_divorce, u_emancipate, u_abandon, u_adopt, u_are_related, \
+    u_has_parent, u_graph
 from discord.views import MarryView
 
 load_dotenv()
@@ -49,9 +52,15 @@ async def embed_marry(invoker: Member, target: Member):
 
     view = MarryView(user=target, invoker=invoker, callback=callback_marry)
 
+    partner_count = int(len(partners) / 2)
+    children_count = len(children)
+
+    timestamp = int(time.time())
+
     embed = Embed(colour=Colour.random(), title=f"{target.nick}, {invoker.nick} longs for you.")
     embed.description = (f"Will you make them your partner? <:UwU_GT:1278010153806987317>\n"
-                         f"They have {len(partners)} partners and {len(children)} children.")
+                         f"They have {partner_count} partners and {children_count} children.")
+    embed.add_field(name="Expires in", value=f"<t:{timestamp}:R>", inline=False)
 
     return embed, view
 
@@ -75,11 +84,29 @@ async def embed_adopt(invoker: Member, target: Member):
 
     view = MarryView(user=target, invoker=invoker, callback=callback_adopt)
 
+    partner_count = int(len(partners) / 2)
+    children_count = len(children)
+
+    timestamp = int(time.time())
+
     embed = Embed(colour=Colour.random(), title=f"{target.nick}, {invoker.nick} wants to adopt you.")
     embed.description = (f"Will you become their adopted child? <:UwU_GT:1278010153806987317>\n"
-                         f"They have {len(partners)} partners and {len(children)} children.")
+                         f"They have {partner_count} partners and {children_count} children.")
+    embed.add_field(name="Expires in", value=f"<t:{timestamp}:R>", inline=False)
 
     return embed, view
+
+
+async def embed_graph(invoker: Member, target: Member):
+    graph_uid = await u_graph(target=target)
+    filename = f"tmp/{target.id}-{graph_uid}.png"
+
+    file = File(filename)
+
+    embed = Embed(colour=Colour.random(), title=f"Here's the graph you requested, {invoker.nick}")
+    embed.set_image(url=f"attachment://{target.id}-{graph_uid}.png")
+
+    return embed, file
 
 
 @bot.event
@@ -90,6 +117,12 @@ async def on_ready():
 @bot.tree.command(name="marry", description="Marry somebody")
 @app_commands.describe(somebody="Your target :3")
 async def marry(interaction: Interaction, somebody: Member):
+    are_related, _ = await u_are_related(invoker=interaction.user, target=somebody)
+
+    if are_related:
+        await interaction.response.send_message(content=f"You're already related to {somebody.mention}.", ephemeral=True)
+        return
+
     embed, view = await embed_marry(interaction.user, somebody)
 
     await interaction.response.send_message(content=f"{interaction.user.mention}, {somebody.mention}", embed=embed, view=view)
@@ -98,6 +131,17 @@ async def marry(interaction: Interaction, somebody: Member):
 @bot.tree.command(name="adopt", description="Adopt somebody")
 @app_commands.describe(somebody="Your target :3")
 async def adopt(interaction: Interaction, somebody: Member):
+    has_parent = await u_has_parent(target=somebody)
+    are_related, _ = await u_are_related(invoker=interaction.user, target=somebody)
+
+    if are_related:
+        await interaction.response.send_message(content=f"You're already related to {somebody.mention}.", ephemeral=True)
+        return
+
+    if has_parent:
+        await interaction.response.send_message(content=f"{somebody.mention} already has a parent! Are you trying to steal them away?", ephemeral=True)
+        return
+
     embed, view = await embed_adopt(interaction.user, somebody)
 
     await interaction.response.send_message(content=f"{interaction.user.mention}, {somebody.mention}", embed=embed, view=view)
@@ -106,14 +150,14 @@ async def adopt(interaction: Interaction, somebody: Member):
 @bot.tree.command(name="divorce", description="Divorce one of your partners")
 @app_commands.describe(partner="The partner you wanna take to court :3")
 async def divorce(interaction: Interaction, partner: Member):
-    await u_divorce(invoker_id=interaction.user.id, target_id=partner.id)
+    await u_divorce(invoker=interaction.user, target=partner)
 
     await interaction.response.send_message(f"You're not partners with {partner.mention} anymore 💔.")
 
 
 @bot.tree.command(name="emancipate", description="Run away from your parent")
 async def emancipate(interaction: Interaction):
-    await u_emancipate(invoker_id=interaction.user.id)
+    await u_emancipate(invoker=interaction.user)
 
     await interaction.response.send_message(f"You ran away from your parent <:aquacry:1278013053270753374>.")
 
@@ -121,9 +165,17 @@ async def emancipate(interaction: Interaction):
 @bot.tree.command(name="abandon", description="Abandon one of your children")
 @app_commands.describe(child="The child you wanna abandon :3")
 async def abandon(interaction: Interaction, child: Member):
-    await u_abandon(invoker_id=interaction.user.id, target_id=child.id)
+    await u_abandon(invoker=interaction.user, target=child)
 
     await interaction.response.send_message(f"You abandoned {child.mention}, you monster <:aquacry:1278013053270753374>.")
+
+
+@bot.tree.command(name="graph", description="Get your or a user's family graph")
+@app_commands.describe(user="Whose graph you want to see")
+async def graph(interaction: Interaction, user: Member = None):
+    embed, file = await embed_graph(invoker=interaction.user, target=interaction.user if user is None else user)
+
+    await interaction.response.send_message(embed=embed, file=file)
 
 
 discord_logger = logging.getLogger('discord')
