@@ -98,11 +98,6 @@ async def u_graph(target: discord.User | discord.Member):
     t_children: list[User] = await d_target.children.all()
     t_parent: User = await d_target.parent.single()
 
-    node_colors = []
-    node_colors_label = []
-    edge_colors = []
-    edge_colors_label = []
-
     graph = networkx.MultiDiGraph()
     graph.add_node(d_target.user_name, color="#8E7DBE", label_color="#E8E5F2")
 
@@ -159,13 +154,10 @@ async def u_graph(target: discord.User | discord.Member):
             label_color="#C3C6A8"
         )
 
-    nodes = graph.nodes()
-    edges = graph.edges()
-
-    node_colors = networkx.get_node_attributes(graph, "color")
-    node_colors_label = networkx.get_node_attributes(graph, "label_color")
-    edge_colors = networkx.get_edge_attributes(graph, "color")
-    edge_colors_label = networkx.get_edge_attributes(graph, "label_color")
+    node_colors = networkx.get_node_attributes(graph, "color").values()
+    node_colors_label = networkx.get_node_attributes(graph, "label_color").values()
+    edge_colors = networkx.get_edge_attributes(graph, "color").values()
+    edge_colors_label = networkx.get_edge_attributes(graph, "label_color").values()
 
     pos = networkx.spring_layout(graph)
     networkx.draw(graph, pos, with_labels=True, node_color=node_colors, edge_color=edge_colors, font_color=node_colors_label)
