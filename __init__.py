@@ -55,7 +55,7 @@ async def embed_marry(invoker: Member, target: Member):
     partner_count = int(len(partners) / 2)
     children_count = len(children)
 
-    timestamp = int(time.time())
+    timestamp = int(time.time()) + 60
 
     embed = Embed(colour=Colour.random(), title=f"{target.nick}, {invoker.nick} longs for you.")
     embed.description = (f"Will you make them your partner? <:UwU_GT:1278010153806987317>\n"
@@ -87,7 +87,7 @@ async def embed_adopt(invoker: Member, target: Member):
     partner_count = int(len(partners) / 2)
     children_count = len(children)
 
-    timestamp = int(time.time())
+    timestamp = int(time.time()) + 60
 
     embed = Embed(colour=Colour.random(), title=f"{target.nick}, {invoker.nick} wants to adopt you.")
     embed.description = (f"Will you become their adopted child? <:UwU_GT:1278010153806987317>\n"
