@@ -99,26 +99,26 @@ async def u_graph(target: discord.User | discord.Member):
     t_parent: User = await d_target.parent.single()
 
     graph = networkx.MultiDiGraph()
-    graph.add_node(d_target.user_name, color="#8E7DBE", label_color="#E8E5F2")
+    graph.add_node(d_target.user_name, color="#F7374F", label_color="#FFF")
 
     if t_parent is not None:
-        graph.add_node(t_parent.user_name, color="#A6D6D6", label_color="#84ABAB")
+        graph.add_node(t_parent.user_name, color="#88304E", label_color="#FFF")
         graph.add_edge(
             d_target.user_name,
             t_parent.user_name,
             relationship="c.",
-            color="#A6D6D6",
-            label_color="#84ABAB"
+            color="#88304E",
+            label_color="#88304E"
         )
 
     for t_partner in t_partners:
-        graph.add_node(t_partner.user_name, color="#F7CFD8", label_color="#C5A5AC")
+        graph.add_node(t_partner.user_name, color="#DA0C81", label_color="#FFF")
         graph.add_edge(
             d_target.user_name,
             t_partner.user_name,
             relationship="m.",
-            color="#F7CFD8",
-            label_color="#C5A5AC"
+            color="#DA0C81",
+            label_color="#DA0C81"
         )
 
         partners: list[User] = await t_partner.partners.all()
@@ -130,38 +130,38 @@ async def u_graph(target: discord.User | discord.Member):
                     t_partner.user_name,
                     d_target.user_name,
                     relationship="m.",
-                    color="#F7CFD8",
-                    label_color="#C5A5AC"
+                    color="#DA0C81",
+                    label_color="#DA0C81"
                 )
                 continue
 
-            graph.add_node(partner.user_name, color="#F7CFD8", label_color="#C5A5AC")
+            graph.add_node(partner.user_name, color="#DA0C81", label_color="#FFF")
             graph.add_edge(
                 t_partner.user_name,
                 partner.user_name,
                 relationship="m.",
-                color="#F7CFD8",
-                label_color="#C5A5AC"
+                color="#DA0C81",
+                label_color="#DA0C81"
             )
 
         for child in children:
-            graph.add_node(child.user_name, color="#F4F8D3", label_color="#C3C6A8")
+            graph.add_node(child.user_name, color="#E95793", label_color="#FFF")
             graph.add_edge(
                 child.user_name,
                 t_partner.user_name,
                 relationship="c.",
-                color="#F4F8D3",
-                label_color="#C3C6A8"
+                color="#E95793",
+                label_color="#E95793"
             )
 
     for t_child in t_children:
-        graph.add_node(t_child.user_name, color="#F4F8D3", label_color="#C3C6A8")
+        graph.add_node(t_child.user_name, color="#E95793", label_color="#FFF")
         graph.add_edge(
             t_child.user_name,
             d_target.user_name,
             relationship="c.",
-            color="#F4F8D3",
-            label_color="#C3C6A8"
+            color="#E95793",
+            label_color="#E95793"
         )
 
     node_colors = list(networkx.get_node_attributes(graph, "color").values())
@@ -172,23 +172,24 @@ async def u_graph(target: discord.User | discord.Member):
     pos = networkx.spring_layout(graph)
 
     ax = plt.gca()
-    ax.set_facecolor("#1F2644")
+    ax.set_facecolor("#2C2C2C")
+    ax.set_frame_on(False)
     ax.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
 
     for i, node in enumerate(graph.nodes()):
         networkx.draw_networkx_nodes(graph, pos, nodelist=[node], node_color=node_colors[i])
-        networkx.draw_networkx_labels(graph, pos, labels={node:node}, font_color=node_colors_label[i])
+        networkx.draw_networkx_labels(graph, pos, labels={node:node}, font_color=node_colors_label[i], font_size=8)
 
     i = 0
     for u, v, data in graph.edges(data=True):
         rel = data.get("relationship", "")
         networkx.draw_networkx_edges(graph, pos, edgelist=[(u, v)], edge_color=edge_colors[i])
-        networkx.draw_networkx_edge_labels(graph, pos, edge_labels={(u, v): rel}, font_color=edge_colors_label[i], bbox={ "fc": "#1F2644", "ec": "#1F2644" })
+        networkx.draw_networkx_edge_labels(graph, pos, edge_labels={(u, v): rel}, font_color=edge_colors_label[i], font_size=4, bbox={ "fc": "#2C2C2C", "ec": "#2C2C2C" })
         i += 1
 
     letters = string.ascii_lowercase
     uid = ''.join(random.choice(letters) for _ in range(12))
 
-    plt.savefig(f"tmp/{target.id}-{uid}.png", format="png", dpi=300, bbox_inches="tight", facecolor="#1F2644")
+    plt.savefig(f"tmp/{target.id}-{uid}.png", format="png", dpi=300, bbox_inches="tight", facecolor="#2C2C2C")
     plt.close("all")
     return uid
