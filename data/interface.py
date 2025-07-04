@@ -172,12 +172,12 @@ async def u_graph(target: discord.User | discord.Member):
     pos = networkx.spring_layout(graph)
 
     for i, node in enumerate(graph.nodes()):
-        networkx.draw_networkx_nodes(graph, pos, nodelist=node, node_color=node_colors[i])
-        networkx.draw_networkx_labels(graph, pos, labels={node:i}, font_color=node_colors_label[i])
+        networkx.draw_networkx_nodes(graph, pos={pos:i}, nodelist=node, node_color=node_colors[i])
+        networkx.draw_networkx_labels(graph, pos={pos:i}, labels={node:i}, font_color=node_colors_label[i])
 
     for i, edge in enumerate(graph.edges()):
-        networkx.draw_networkx_edges(graph, pos, edgelist=edge, edge_color=edge_colors[i])
-        networkx.draw_networkx_edge_labels(graph, pos, edge_labels={edge:i}, font_color=edge_colors_label[i], bbox={ "fc": "#1F2644", "ec": "#1F2644" })
+        networkx.draw_networkx_edges(graph, pos={pos:i}, edgelist=edge, edge_color=edge_colors[i])
+        networkx.draw_networkx_edge_labels(graph, pos={pos:i}, edge_labels={edge:i}, font_color=edge_colors_label[i], bbox={ "fc": "#1F2644", "ec": "#1F2644" })
 
     letters = string.ascii_lowercase
     uid = ''.join(random.choice(letters) for _ in range(12))
