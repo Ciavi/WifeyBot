@@ -98,8 +98,15 @@ async def u_graph(target: discord.User | discord.Member):
     t_children: list[User] = await d_target.children.all()
     t_parent: User = await d_target.parent.single()
 
+    node_colors: list[str] = []
+    node_colors_label: list[str] = []
+    edge_colors: list[str] = []
+    edge_colors_label: list[str] = []
+
     graph = networkx.MultiDiGraph()
     graph.add_node(d_target.user_name)
+    node_colors.append("#8E7DBE")
+    node_colors_label.append("#E8E5F2")
 
     if t_parent is not None:
         graph.add_node(t_parent.user_name)
@@ -109,6 +116,11 @@ async def u_graph(target: discord.User | discord.Member):
             relationship="Is child of"
         )
 
+        node_colors.append("#A6D6D6")
+        node_colors_label.append("#84ABAB")
+        edge_colors.append("#A6D6D6")
+        edge_colors_label.append("#84ABAB")
+
     for t_partner in t_partners:
         graph.add_node(t_partner.user_name)
         graph.add_edge(
@@ -116,6 +128,11 @@ async def u_graph(target: discord.User | discord.Member):
             t_partner.user_name,
             relationship="Is married to"
         )
+
+        node_colors.append("#F7CFD8")
+        node_colors_label.append("#C5A5AC")
+        edge_colors.append("#F7CFD8")
+        edge_colors_label.append("#C5A5AC")
 
         partners: list[User] = await t_partner.partners.all()
         children: list[User] = await t_partner.children.all()
@@ -128,6 +145,11 @@ async def u_graph(target: discord.User | discord.Member):
                 relationship="Is married to"
             )
 
+            node_colors.append("#F7CFD8")
+            node_colors_label.append("#C5A5AC")
+            edge_colors.append("#F7CFD8")
+            edge_colors_label.append("#C5A5AC")
+
         for child in children:
             graph.add_node(child.user_name)
             graph.add_edge(
@@ -135,6 +157,11 @@ async def u_graph(target: discord.User | discord.Member):
                 t_partner.user_name,
                 relationship="Is child of"
             )
+
+            node_colors.append("#F4F8D3")
+            node_colors_label.append("#C3C6A8")
+            edge_colors.append("#F4F8D3")
+            edge_colors_label.append("#C3C6A8")
 
     for t_child in t_children:
         graph.add_node(t_child.user_name)
@@ -144,10 +171,15 @@ async def u_graph(target: discord.User | discord.Member):
             relationship="Is child of"
         )
 
+        node_colors.append("#F4F8D3")
+        node_colors_label.append("#C3C6A8")
+        edge_colors.append("#F4F8D3")
+        edge_colors_label.append("#C3C6A8")
+
     pos = networkx.spring_layout(graph)
-    networkx.draw(graph, pos, with_labels=True, node_color="#687FE5", edge_color="#EBD6FB", font_color="#FCD8CD")
+    networkx.draw(graph, pos, with_labels=True, node_color=node_colors, edge_color=edge_colors, font_color=node_colors_label)
     edge_labels = networkx.get_edge_attributes(graph, "relationship")
-    networkx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_color="#FCD8CD", bbox={ "fc": "#1F2644", "ec": "#1F2644" })
+    networkx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_color="#FFFFFF", bbox={ "fc": "#1F2644", "ec": "#1F2644" })
 
     letters = string.ascii_lowercase
     uid = ''.join(random.choice(letters) for _ in range(12))
