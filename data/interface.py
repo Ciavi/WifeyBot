@@ -125,10 +125,20 @@ async def u_graph(target: discord.User | discord.Member):
         children: list[User] = await t_partner.children.all()
 
         for partner in partners:
-            if partner.user_name == d_target.user_name or partner.user_name == t_parent.user_name:
+            if partner.user_name == d_target.user_name:
                 graph.add_edge(
                     t_partner.user_name,
                     d_target.user_name,
+                    relationship="m.",
+                    color="#DA0C81",
+                    label_color="#DA0C81"
+                )
+                continue
+
+            if partner.user_name == t_parent.user_name:
+                graph.add_edge(
+                    t_partner.user_name,
+                    partner.user_name,
                     relationship="m.",
                     color="#DA0C81",
                     label_color="#DA0C81"
