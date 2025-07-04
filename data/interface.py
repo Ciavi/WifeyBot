@@ -154,10 +154,10 @@ async def u_graph(target: discord.User | discord.Member):
             label_color="#C3C6A8"
         )
 
-    node_colors = networkx.get_node_attributes(graph, "color").values()
-    node_colors_label = networkx.get_node_attributes(graph, "label_color").values()
-    edge_colors = networkx.get_edge_attributes(graph, "color").values()
-    edge_colors_label = networkx.get_edge_attributes(graph, "label_color").values()
+    node_colors = list(networkx.get_node_attributes(graph, "color").values())
+    node_colors_label = list(networkx.get_node_attributes(graph, "label_color").values())
+    edge_colors = list(networkx.get_edge_attributes(graph, "color").values())
+    edge_colors_label = list(networkx.get_edge_attributes(graph, "label_color").values())
 
     pos = networkx.spring_layout(graph)
     networkx.draw(graph, pos, with_labels=True, node_color=node_colors, edge_color=edge_colors, font_color=node_colors_label)
