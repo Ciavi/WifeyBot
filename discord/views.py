@@ -134,7 +134,7 @@ class PublicView(discord.ui.View):
 
 class MarryView(BaseView):
     def __init__(self, user: discord.User | discord.Member, invoker: discord.User | discord.Member, callback):
-        super().__init__(user=user, timeout=None)
+        super().__init__(user=user, timeout=60)
         self.callback = callback
         self.user = user
 
@@ -144,11 +144,7 @@ class MarryView(BaseView):
         for child in self.children:
             child.callback = self.callback
 
-        self.exit()
 
-
-    async def exit(self):
-        await asyncio.sleep(60)
-        for child in self.children:
-            child.disabled = True
+    async def disable(self):
+        self._disable_all()
 

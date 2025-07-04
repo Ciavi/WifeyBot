@@ -38,6 +38,8 @@ async def callback_marry(interaction: Interaction):
     invoker_id: int = int(interaction.data["custom_id"].split(":")[1])
     invoker = bot.get_user(invoker_id)
 
+    interaction.message.edit(view=None)
+
     if b_marry:
         await u_marry(invoker=invoker, target=interaction.user)
         await interaction.response.send_message(content=f"Congratulations to {invoker.mention} and {interaction.user.mention} on their marriage!")
@@ -69,6 +71,8 @@ async def callback_adopt(interaction: Interaction):
     b_adopt: bool = True if str(interaction.data["custom_id"].split(":")[0]) == "yes" else False
     invoker_id: int = int(interaction.data["custom_id"].split(":")[1])
     invoker = bot.get_user(invoker_id)
+
+    interaction.message.edit(view=None)
 
     if b_adopt:
         await u_adopt(invoker=invoker, target=interaction.user)
