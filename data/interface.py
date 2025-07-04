@@ -125,6 +125,9 @@ async def u_graph(target: discord.User | discord.Member):
         children: list[User] = await t_partner.children.all()
 
         for partner in partners:
+            if partner.user_name == d_target.user_name:
+                continue
+
             graph.add_node(partner.user_name, color="#F7CFD8", label_color="#C5A5AC")
             graph.add_edge(
                 t_partner.user_name,
@@ -155,14 +158,14 @@ async def u_graph(target: discord.User | discord.Member):
         )
 
     node_colors = list(networkx.get_node_attributes(graph, "color").values())
-    node_colors_label = list(networkx.get_node_attributes(graph, "label_color").values())
+    # node_colors_label = list(networkx.get_node_attributes(graph, "label_color").values())
     edge_colors = list(networkx.get_edge_attributes(graph, "color").values())
-    edge_colors_label = list(networkx.get_edge_attributes(graph, "label_color").values())
+    # edge_colors_label = list(networkx.get_edge_attributes(graph, "label_color").values())
 
     pos = networkx.spring_layout(graph)
-    networkx.draw(graph, pos, with_labels=True, node_color=node_colors, edge_color=edge_colors, font_color=node_colors_label)
-    edge_labels = networkx.get_edge_attributes(graph, "relationship")
-    networkx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_color="#FFFFFF", bbox={ "fc": "#1F2644", "ec": "#1F2644" })
+    networkx.draw(graph, pos, with_labels=True, node_color=node_colors, edge_color=edge_colors, font_color="#FFFFFF")
+    # edge_labels = networkx.get_edge_attributes(graph, "relationship")
+    # networkx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_color="#FFFFFF", bbox={ "fc": "#1F2644", "ec": "#1F2644" })
 
     letters = string.ascii_lowercase
     uid = ''.join(random.choice(letters) for _ in range(12))
