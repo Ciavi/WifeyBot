@@ -153,4 +153,5 @@ async def u_graph(target: discord.User | discord.Member):
     uid = ''.join(random.choice(letters) for _ in range(12))
 
     plt.savefig(f"tmp/{target.id}-{uid}.png", format="png", dpi=300, bbox_inches="tight", facecolor="#1F2644")
+    plt.close("all")
     return uid
