@@ -135,7 +135,7 @@ async def u_graph(target: discord.User | discord.Member):
                 )
                 continue
 
-            if partner.user_name == t_parent.user_name:
+            if t_parent is not None and partner.user_name == t_parent.user_name:
                 graph.add_edge(
                     t_partner.user_name,
                     partner.user_name,
