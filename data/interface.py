@@ -106,7 +106,7 @@ async def u_graph(target: discord.User | discord.Member):
         graph.add_edge(
             d_target.user_name,
             t_parent.user_name,
-            relationship="Is child of",
+            relationship="c.",
             color="#A6D6D6",
             label_color="#84ABAB"
         )
@@ -116,7 +116,7 @@ async def u_graph(target: discord.User | discord.Member):
         graph.add_edge(
             d_target.user_name,
             t_partner.user_name,
-            relationship="Is married to",
+            relationship="m.",
             color="#F7CFD8",
             label_color="#C5A5AC"
         )
@@ -129,7 +129,7 @@ async def u_graph(target: discord.User | discord.Member):
                 graph.add_edge(
                     t_partner.user_name,
                     d_target.user_name,
-                    relationship="Is married to",
+                    relationship="m.",
                     color="#F7CFD8",
                     label_color="#C5A5AC"
                 )
@@ -139,7 +139,7 @@ async def u_graph(target: discord.User | discord.Member):
             graph.add_edge(
                 t_partner.user_name,
                 partner.user_name,
-                relationship="Is married to",
+                relationship="m.",
                 color="#F7CFD8",
                 label_color="#C5A5AC"
             )
@@ -149,7 +149,7 @@ async def u_graph(target: discord.User | discord.Member):
             graph.add_edge(
                 child.user_name,
                 t_partner.user_name,
-                relationship="Is child of",
+                relationship="c.",
                 color="#F4F8D3",
                 label_color="#C3C6A8"
             )
@@ -159,7 +159,7 @@ async def u_graph(target: discord.User | discord.Member):
         graph.add_edge(
             t_child.user_name,
             d_target.user_name,
-            relationship="Is child of",
+            relationship="c.",
             color="#F4F8D3",
             label_color="#C3C6A8"
         )
