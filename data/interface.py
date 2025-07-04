@@ -98,83 +98,74 @@ async def u_graph(target: discord.User | discord.Member):
     t_children: list[User] = await d_target.children.all()
     t_parent: User = await d_target.parent.single()
 
-    node_colors: list[str] = []
-    node_colors_label: list[str] = []
-    edge_colors: list[str] = []
-    edge_colors_label: list[str] = []
+    node_colors = []
+    node_colors_label = []
+    edge_colors = []
+    edge_colors_label = []
 
     graph = networkx.MultiDiGraph()
-    graph.add_node(d_target.user_name)
-    node_colors.append("#8E7DBE")
-    node_colors_label.append("#E8E5F2")
+    graph.add_node(d_target.user_name, color="#8E7DBE", label_color="#E8E5F2")
 
     if t_parent is not None:
-        graph.add_node(t_parent.user_name)
+        graph.add_node(t_parent.user_name, color="#A6D6D6", label_color="#84ABAB")
         graph.add_edge(
             d_target.user_name,
             t_parent.user_name,
-            relationship="Is child of"
+            relationship="Is child of",
+            color="#A6D6D6",
+            label_color="#84ABAB"
         )
 
-        node_colors.append("#A6D6D6")
-        node_colors_label.append("#84ABAB")
-        edge_colors.append("#A6D6D6")
-        edge_colors_label.append("#84ABAB")
-
     for t_partner in t_partners:
-        graph.add_node(t_partner.user_name)
+        graph.add_node(t_partner.user_name, color="#F7CFD8", label_color="#C5A5AC")
         graph.add_edge(
             d_target.user_name,
             t_partner.user_name,
-            relationship="Is married to"
+            relationship="Is married to",
+            color="#F7CFD8",
+            label_color="#C5A5AC"
         )
-
-        node_colors.append("#F7CFD8")
-        node_colors_label.append("#C5A5AC")
-        edge_colors.append("#F7CFD8")
-        edge_colors_label.append("#C5A5AC")
 
         partners: list[User] = await t_partner.partners.all()
         children: list[User] = await t_partner.children.all()
 
         for partner in partners:
-            graph.add_node(partner.user_name)
+            graph.add_node(partner.user_name, color="#F7CFD8", label_color="#C5A5AC")
             graph.add_edge(
                 t_partner.user_name,
                 partner.user_name,
-                relationship="Is married to"
+                relationship="Is married to",
+                color="#F7CFD8",
+                label_color="#C5A5AC"
             )
 
-            node_colors.append("#F7CFD8")
-            node_colors_label.append("#C5A5AC")
-            edge_colors.append("#F7CFD8")
-            edge_colors_label.append("#C5A5AC")
-
         for child in children:
-            graph.add_node(child.user_name)
+            graph.add_node(child.user_name, color="#F4F8D3", label_color="#C3C6A8")
             graph.add_edge(
                 child.user_name,
                 t_partner.user_name,
-                relationship="Is child of"
+                relationship="Is child of",
+                color="#F4F8D3",
+                label_color="#C3C6A8"
             )
 
-            node_colors.append("#F4F8D3")
-            node_colors_label.append("#C3C6A8")
-            edge_colors.append("#F4F8D3")
-            edge_colors_label.append("#C3C6A8")
-
     for t_child in t_children:
-        graph.add_node(t_child.user_name)
+        graph.add_node(t_child.user_name, color="#F4F8D3", label_color="#C3C6A8")
         graph.add_edge(
             t_child.user_name,
             d_target.user_name,
-            relationship="Is child of"
+            relationship="Is child of",
+            color="#F4F8D3",
+            label_color="#C3C6A8"
         )
 
-        node_colors.append("#F4F8D3")
-        node_colors_label.append("#C3C6A8")
-        edge_colors.append("#F4F8D3")
-        edge_colors_label.append("#C3C6A8")
+    nodes = graph.nodes()
+    edges = graph.edges()
+
+    node_colors = networkx.get_node_attributes(graph, "color")
+    node_colors_label = networkx.get_node_attributes(graph, "label_color")
+    edge_colors = networkx.get_edge_attributes(graph, "color")
+    edge_colors_label = networkx.get_edge_attributes(graph, "label_color")
 
     pos = networkx.spring_layout(graph)
     networkx.draw(graph, pos, with_labels=True, node_color=node_colors, edge_color=edge_colors, font_color=node_colors_label)
