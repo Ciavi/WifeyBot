@@ -126,6 +126,13 @@ async def u_graph(target: discord.User | discord.Member):
 
         for partner in partners:
             if partner.user_name == d_target.user_name:
+                graph.add_edge(
+                    t_partner.user_name,
+                    d_target.user_name,
+                    relationship="Is married to",
+                    color="#F7CFD8",
+                    label_color="#C5A5AC"
+                )
                 continue
 
             graph.add_node(partner.user_name, color="#F7CFD8", label_color="#C5A5AC")
