@@ -171,6 +171,10 @@ async def u_graph(target: discord.User | discord.Member):
 
     pos = networkx.spring_layout(graph)
 
+    ax = plt.gca()
+    ax.set_facecolor("#1F2644")
+    ax.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
+
     for i, node in enumerate(graph.nodes()):
         networkx.draw_networkx_nodes(graph, pos, nodelist=[node], node_color=node_colors[i])
         networkx.draw_networkx_labels(graph, pos, labels={node:node}, font_color=node_colors_label[i])
