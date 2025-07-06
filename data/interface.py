@@ -217,14 +217,14 @@ async def u_graph(target: discord.User | discord.Member):
     return uid
 
 
-class NodeType(enum.Enum):
+class NodeType(enum.IntEnum):
     SELF = 0
     PARENT = 1
     PARTNER = 2
     CHILD = 3
 
 
-class EdgeType(enum.Enum):
+class EdgeType(enum.IntEnum):
     PARTNER = 0
     CHILD = 1
 
