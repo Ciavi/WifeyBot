@@ -102,7 +102,7 @@ async def u_graph(target: discord.User | discord.Member):
     graph.add_node(d_target.user_name, color="#F7374F", label_color="#FFF")
 
     if t_parent is not None:
-        graph.add_node(t_parent.user_name, color="#55cfe2", label_color="#FFF")
+        graph.add_node(t_parent.user_name, color="#547b59", label_color="#FFF")
         graph.add_edge(
             d_target.user_name,
             t_parent.user_name,
@@ -112,7 +112,7 @@ async def u_graph(target: discord.User | discord.Member):
         )
 
     for t_partner in t_partners:
-        graph.add_node(t_partner.user_name, color="#8ccd95", label_color="#FFF")
+        graph.add_node(t_partner.user_name, color="#547b59", label_color="#FFF")
         graph.add_edge(
             d_target.user_name,
             t_partner.user_name,
@@ -145,7 +145,7 @@ async def u_graph(target: discord.User | discord.Member):
                 )
                 continue
 
-            graph.add_node(partner.user_name, color="#8ccd95", label_color="#FFF")
+            graph.add_node(partner.user_name, color="#547b59", label_color="#FFF")
             graph.add_edge(
                 t_partner.user_name,
                 partner.user_name,
@@ -155,7 +155,7 @@ async def u_graph(target: discord.User | discord.Member):
             )
 
         for child in children:
-            graph.add_node(child.user_name, color="#ecb5ca", label_color="#FFF")
+            graph.add_node(child.user_name, color="#8d6c79", label_color="#FFF")
             graph.add_edge(
                 child.user_name,
                 t_partner.user_name,
@@ -165,7 +165,7 @@ async def u_graph(target: discord.User | discord.Member):
             )
 
     for t_child in t_children:
-        graph.add_node(t_child.user_name, color="#ecb5ca", label_color="#FFF")
+        graph.add_node(t_child.user_name, color="#8d6c79", label_color="#FFF")
         graph.add_edge(
             t_child.user_name,
             d_target.user_name,
