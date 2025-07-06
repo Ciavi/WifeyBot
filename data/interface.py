@@ -1,5 +1,7 @@
+import enum
 import random
 import string
+from dataclasses import dataclass
 
 import discord
 import matplotlib.pyplot as plt
@@ -214,3 +216,105 @@ async def u_graph(target: discord.User | discord.Member):
     plt.close("all")
     return uid
 
+
+class NodeType(enum.Enum):
+    SELF = 0
+    PARENT = 1
+    PARTNER = 2
+    CHILD = 3
+
+
+class EdgeType(enum.Enum):
+    PARTNER = 0
+    CHILD = 1
+
+
+@dataclass(frozen=True)
+class Node:
+    label: str
+    type: NodeType
+
+
+@dataclass(frozen=True)
+class Edge:
+    f: str
+    t: str
+    type: EdgeType
+
+
+async def u_newgraph(target: discord.User | discord.Member):
+    node_table: dict[str, Node] = {}
+    edge_table: dict[tuple[str, str], Edge] = {}
+
+    def add_node(new: Node):
+        existing = node_table.get(new.label)
+        if not existing:
+            node_table[new.label] = new
+        else:
+            if new.type < existing.type:
+                node_table[new.label] = new
+
+    def add_edge(new: Edge):
+        existing = edge_table.get((new.f, new.t)) or edge_table.get((new.t, new.f))
+        if not existing:
+            edge_table[(new.f, new.t)] = new
+        else:
+            if new.type != existing.type:
+                edge_table[(new.f, new.t)] = new
+
+    d_target: User = await update_or_create_user(user_id=target.id, user_name=target.name)
+    t_partners: list[User] = await d_target.partners.all()
+    t_children: list[User] = await d_target.children.all()
+    t_parent: User = await d_target.parent.single()
+
+    add_node(Node(d_target.user_name, NodeType.SELF))
+
+    if t_parent is not None:
+        add_node(Node(t_parent.user_name, NodeType.PARENT))
+        add_edge(Edge(d_target.user_name, t_parent.user_name, EdgeType.CHILD))
+
+    for t_partner in t_partners:
+        add_node(Node(t_partner.user_name, NodeType.PARTNER))
+        add_edge(Edge(d_target.user_name, t_partner.user_name, EdgeType.PARTNER))
+
+        tt_partners: list[User] = await t_partner.partners.all()
+        tt_children: list[User] = await t_partner.children.all()
+
+        for tt_partner in tt_partners:
+            add_node(Node(tt_partner.user_name, NodeType.PARTNER))
+            add_edge(Edge(t_partner.user_name, tt_partner.user_name, EdgeType.PARTNER))
+
+        for tt_child in tt_children:
+            add_node(Node(tt_child.user_name, NodeType.CHILD))
+            add_edge(Edge(tt_child.user_name, t_partner.user_name, EdgeType.CHILD))
+
+    for t_child in t_children:
+        add_node(Node(t_child.user_name, NodeType.CHILD))
+        add_edge(Edge(t_child.user_name, d_target.user_name, EdgeType.CHILD))
+
+    graph = networkx.MultiDiGraph()
+    pos = networkx.spring_layout(G=graph, k=3, scale=7.50, seed=42)
+
+    ax = plt.gca()
+    ax.set_facecolor("#00000000")
+    ax.set_frame_on(False)
+    ax.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
+
+    for label, node in node_table.items():
+        color = "#FFB7B2" if node.type == NodeType.SELF else ("#A3C4F3" if node.type == NodeType.PARENT else ("#CBAACB" if node.type == NodeType.PARTNER else "#B5EAD7"))
+        networkx.draw_networkx_nodes(graph, pos, nodelist=[label], node_color=color)
+        networkx.draw_networkx_labels(graph, pos, labels={label:node.label}, font_color="#1B1C22", font_size=8)
+
+    for (f, t), edge in edge_table.items():
+        color = "#CBAACB" if edge.type == EdgeType.PARTNER else "#B5EAD7"
+        direction = "<->" if edge.type == EdgeType.PARTNER else "->"
+        label = "m." if edge.type == EdgeType.PARTNER else "c."
+        networkx.draw_networkx_edges(graph, pos, edgelist=[(f, t)], connectionstyle="arc3,rad=0.075", width=0.5, arrowstyle=direction, arrowsize=7, edge_color=color)
+        networkx.draw_networkx_edge_labels(graph, pos, edge_labels={(f, t): label}, font_color=color, font_size=4, bbox={ "fc": "#00000000", "ec": "#00000000", "boxstyle": "circle" })
+
+    letters = string.ascii_lowercase
+    uid = ''.join(random.choice(letters) for _ in range(12))
+
+    plt.savefig(f"tmp/{target.id}-{uid}.png", format="png", dpi=300, bbox_inches="tight", facecolor="#00000000")
+    plt.close("all")
+    return uid

@@ -12,7 +12,7 @@ from os import environ as env
 import system.configuration
 import system.historian
 from data.interface import u_marry, read_or_create_user, u_divorce, u_emancipate, u_abandon, u_adopt, u_are_related, \
-    u_has_parent, u_graph
+    u_has_parent, u_graph, u_newgraph
 from discord.views import MarryView
 
 load_dotenv()
@@ -102,7 +102,7 @@ async def embed_adopt(invoker: Member, target: Member):
 
 
 async def embed_graph(invoker: Member, target: Member):
-    graph_uid = await u_graph(target=target)
+    graph_uid = await u_newgraph(target=target)
     filename = f"tmp/{target.id}-{graph_uid}.png"
 
     file = File(filename)
