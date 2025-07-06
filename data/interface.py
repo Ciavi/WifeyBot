@@ -293,6 +293,11 @@ async def u_newgraph(target: discord.User | discord.Member):
         add_edge(Edge(t_child.user_name, d_target.user_name, EdgeType.CHILD))
 
     graph = networkx.MultiDiGraph()
+    for label, _ in node_table.items():
+        graph.add_node(label)
+    for (f, t), _ in edge_table.items():
+        graph.add_edge(f, t)
+
     pos = networkx.spring_layout(G=graph, k=3, scale=7.50, seed=42)
 
     ax = plt.gca()
@@ -301,15 +306,11 @@ async def u_newgraph(target: discord.User | discord.Member):
     ax.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
 
     for label, node in node_table.items():
-        graph.add_node(label)
-
         color = "#FFB7B2" if node.type == NodeType.SELF else ("#A3C4F3" if node.type == NodeType.PARENT else ("#CBAACB" if node.type == NodeType.PARTNER else "#B5EAD7"))
         networkx.draw_networkx_nodes(graph, pos, nodelist=[label], node_color=color)
         networkx.draw_networkx_labels(graph, pos, labels={label:node.label}, font_color="#1B1C22", font_size=8)
 
     for (f, t), edge in edge_table.items():
-        graph.add_edge(f, t)
-
         color = "#CBAACB" if edge.type == EdgeType.PARTNER else "#B5EAD7"
         direction = "<->" if edge.type == EdgeType.PARTNER else "->"
         label = "m." if edge.type == EdgeType.PARTNER else "c."
