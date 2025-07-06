@@ -179,7 +179,7 @@ async def u_graph(target: discord.User | discord.Member):
     edge_colors = list(networkx.get_edge_attributes(graph, "color").values())
     edge_colors_label = list(networkx.get_edge_attributes(graph, "label_color").values())
 
-    pos = networkx.spring_layout(G=graph, k=2.5, scale=10.0, seed=42)
+    pos = networkx.spring_layout(G=graph, k=3, scale=7.50, seed=42)
 
     ax = plt.gca()
     ax.set_facecolor("#2C2C2C")
@@ -193,7 +193,7 @@ async def u_graph(target: discord.User | discord.Member):
     i = 0
     for u, v, data in graph.edges(data=True):
         rel = data.get("relationship", "")
-        networkx.draw_networkx_edges(graph, pos, edgelist=[(u, v)], connectionstyle="arc3,rad=0.2", edge_color=edge_colors[i])
+        networkx.draw_networkx_edges(graph, pos, edgelist=[(u, v)], connectionstyle="arc3,rad=0.1", width=0.5, edge_color=edge_colors[i])
         networkx.draw_networkx_edge_labels(graph, pos, edge_labels={(u, v): rel}, font_color=edge_colors_label[i], font_size=4, bbox={ "fc": "#2C2C2C", "ec": "#2C2C2C" })
         i += 1
 
