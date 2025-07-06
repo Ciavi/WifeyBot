@@ -3,3 +3,4 @@ neomodel~=5.5.0
 matplotlib~=3.10.3
 networkx~=3.5
 colorlog~=6.9.0
+discord.py~=2.5.2
