@@ -194,7 +194,7 @@ async def u_graph(target: discord.User | discord.Member):
     for u, v, data in graph.edges(data=True):
         rel = data.get("relationship", "")
         networkx.draw_networkx_edges(graph, pos, edgelist=[(u, v)], connectionstyle="arc3,rad=0.1", width=0.5, edge_color=edge_colors[i])
-        networkx.draw_networkx_edge_labels(graph, pos, edge_labels={(u, v): rel}, font_color=edge_colors_label[i], font_size=4, bbox={ "fc": "#2C2C2C", "ec": "#2C2C2C" })
+        networkx.draw_networkx_edge_labels(graph, pos, edge_labels={(u, v): rel}, font_color=edge_colors_label[i], font_size=4, bbox={ "fc": "#2C2C2C", "ec": edge_colors_label[i], "boxstyle": "circle" })
         i += 1
 
     letters = string.ascii_lowercase
