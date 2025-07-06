@@ -102,23 +102,23 @@ async def u_graph(target: discord.User | discord.Member):
     graph.add_node(d_target.user_name, color="#F7374F", label_color="#FFF")
 
     if t_parent is not None:
-        graph.add_node(t_parent.user_name, color="#88304E", label_color="#FFF")
+        graph.add_node(t_parent.user_name, color="#55cfe2", label_color="#FFF")
         graph.add_edge(
             d_target.user_name,
             t_parent.user_name,
             relationship="c.",
-            color="#88304E",
-            label_color="#88304E"
+            color="#55cfe2",
+            label_color="#55cfe2"
         )
 
     for t_partner in t_partners:
-        graph.add_node(t_partner.user_name, color="#DA0C81", label_color="#FFF")
+        graph.add_node(t_partner.user_name, color="#8ccd95", label_color="#FFF")
         graph.add_edge(
             d_target.user_name,
             t_partner.user_name,
             relationship="m.",
-            color="#DA0C81",
-            label_color="#DA0C81"
+            color="#8ccd95",
+            label_color="#8ccd95"
         )
 
         partners: list[User] = await t_partner.partners.all()
@@ -130,8 +130,8 @@ async def u_graph(target: discord.User | discord.Member):
                     t_partner.user_name,
                     d_target.user_name,
                     relationship="m.",
-                    color="#DA0C81",
-                    label_color="#DA0C81"
+                    color="#8ccd95",
+                    label_color="#8ccd95"
                 )
                 continue
 
@@ -140,38 +140,38 @@ async def u_graph(target: discord.User | discord.Member):
                     t_partner.user_name,
                     partner.user_name,
                     relationship="m.",
-                    color="#DA0C81",
-                    label_color="#DA0C81"
+                    color="#8ccd95",
+                    label_color="#8ccd95"
                 )
                 continue
 
-            graph.add_node(partner.user_name, color="#DA0C81", label_color="#FFF")
+            graph.add_node(partner.user_name, color="#8ccd95", label_color="#FFF")
             graph.add_edge(
                 t_partner.user_name,
                 partner.user_name,
                 relationship="m.",
-                color="#DA0C81",
-                label_color="#DA0C81"
+                color="#8ccd95",
+                label_color="#8ccd95"
             )
 
         for child in children:
-            graph.add_node(child.user_name, color="#E95793", label_color="#FFF")
+            graph.add_node(child.user_name, color="#ecb5ca", label_color="#FFF")
             graph.add_edge(
                 child.user_name,
                 t_partner.user_name,
                 relationship="c.",
-                color="#E95793",
-                label_color="#E95793"
+                color="#ecb5ca",
+                label_color="#ecb5ca"
             )
 
     for t_child in t_children:
-        graph.add_node(t_child.user_name, color="#E95793", label_color="#FFF")
+        graph.add_node(t_child.user_name, color="#ecb5ca", label_color="#FFF")
         graph.add_edge(
             t_child.user_name,
             d_target.user_name,
             relationship="c.",
-            color="#E95793",
-            label_color="#E95793"
+            color="#ecb5ca",
+            label_color="#ecb5ca"
         )
 
     node_colors = list(networkx.get_node_attributes(graph, "color").values())
@@ -182,7 +182,7 @@ async def u_graph(target: discord.User | discord.Member):
     pos = networkx.spring_layout(G=graph, k=3, scale=7.50, seed=42)
 
     ax = plt.gca()
-    ax.set_facecolor("#2C2C2C")
+    ax.set_facecolor("#00000000")
     ax.set_frame_on(False)
     ax.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
 
@@ -200,6 +200,6 @@ async def u_graph(target: discord.User | discord.Member):
     letters = string.ascii_lowercase
     uid = ''.join(random.choice(letters) for _ in range(12))
 
-    plt.savefig(f"tmp/{target.id}-{uid}.png", format="png", dpi=300, bbox_inches="tight", facecolor="#2C2C2C")
+    plt.savefig(f"tmp/{target.id}-{uid}.png", format="png", dpi=300, bbox_inches="tight", facecolor="#00000000")
     plt.close("all")
     return uid
