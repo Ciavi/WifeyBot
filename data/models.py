@@ -18,8 +18,8 @@ class User(AsyncStructuredNode):
     user_id = IntegerProperty(required=True, unique_index=True)
     user_name = StringProperty()
 
-    partners = AsyncRelationship('User', 'PARTNER', model=ProperRelationship)
+    partners = AsyncRelationship('User', 'IS_PARTNER_WITH', model=ProperRelationship)
 
-    children = AsyncRelationshipTo('User', 'CHILD', model=ProperRelationship)
-    parent = AsyncRelationshipFrom('User', 'PARENT', model=ProperRelationship, cardinality=AsyncZeroOrOne)
+    children = AsyncRelationshipTo('User', 'HAS_CHILD', model=ProperRelationship)
+    parent = AsyncRelationshipFrom('User', 'IS_PARENT_OF', model=ProperRelationship, cardinality=AsyncZeroOrOne)
 
