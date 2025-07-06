@@ -112,6 +112,16 @@ async def u_graph(target: discord.User | discord.Member):
         )
 
     for t_partner in t_partners:
+        if t_partner.user_name == d_target.user_name:
+            graph.add_edge(
+                d_target.user_name,
+                t_partner.user_name,
+                relationship="m.",
+                color="#8ccd95",
+                label_color="#8ccd95"
+            )
+            continue
+
         graph.add_node(t_partner.user_name, color="#547b59", label_color="#FFF")
         graph.add_edge(
             d_target.user_name,
@@ -203,3 +213,4 @@ async def u_graph(target: discord.User | discord.Member):
     plt.savefig(f"tmp/{target.id}-{uid}.png", format="png", dpi=300, bbox_inches="tight", facecolor="#00000000")
     plt.close("all")
     return uid
+
