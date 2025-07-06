@@ -179,7 +179,7 @@ async def u_graph(target: discord.User | discord.Member):
     edge_colors = list(networkx.get_edge_attributes(graph, "color").values())
     edge_colors_label = list(networkx.get_edge_attributes(graph, "label_color").values())
 
-    pos = networkx.spring_layout(graph)
+    pos = networkx.spring_layout(G=graph, k=2.0, scale=5.0)
 
     ax = plt.gca()
     ax.set_facecolor("#2C2C2C")
