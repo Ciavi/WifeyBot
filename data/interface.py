@@ -200,6 +200,8 @@ async def u_graph(target: discord.User | discord.Member):
 
         node.set("shape", "hexagon")
         node.set("regular", True)
+        node.set("fixedsize", True)
+        node.set("height", 0.75)
         node.set("penwidth", 0.0)
         node.set("style", "filled")
         node.set("fillcolor", style.get("fillcolor"))
