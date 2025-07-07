@@ -192,6 +192,7 @@ async def u_graph(target: discord.User | discord.Member):
 
     pdot.set("dpi", 300)
     pdot.set("layout", "sfdp")
+    pdot.set("beautify", True)
     pdot.set("overlap", "prism")
     pdot.set("overlap_scaling", -8)
 
