@@ -216,7 +216,7 @@ async def u_graph(target: discord.User | discord.Member):
         node.set("fillcolor", style.get("fillcolor"))
         node.set("fontname", "DejaVu Sans")
         node.set("fontcolor", style.get("fontcolor"))
-        node.set("fontsize", 6.0)
+        node.set("fontsize", 5.0)
 
     for edge in pdot.get_edges():
         edge_type = edge.get("type")
