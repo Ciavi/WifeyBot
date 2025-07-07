@@ -190,12 +190,17 @@ async def u_graph(target: discord.User | discord.Member):
 
     pdot = networkx.drawing.nx_pydot.to_pydot(graph)
 
+    pdot.set("dpi", 300)
+    pdot.set("layout", "neato")
+
     for node in pdot.get_nodes():
         node_name = node.get_name().strip()
         node_type = graph.nodes[node_name].get("type", "SELF")
         style = node_styles.get(node_type)
 
         node.set("shape", "hexagon")
+        node.set("regular", True)
+        node.set("penwidth", 0.0)
         node.set("style", "filled")
         node.set("fillcolor", style.get("fillcolor"))
         node.set("fontcolor", style.get("fontcolor"))
@@ -207,6 +212,7 @@ async def u_graph(target: discord.User | discord.Member):
 
         edge.set("dir", "both" if edge_type == EdgeType.PARTNER.name else "forward")
         edge.set("label", "m." if edge_type == EdgeType.PARTNER.name else "c.")
+        edge.set("arrowsize", 0.75)
         edge.set("color", style.get("color"))
         edge.set("fontcolor", style.get("fontcolor"))
         edge.set("fontsize", 4.0)
