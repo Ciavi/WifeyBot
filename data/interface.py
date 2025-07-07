@@ -198,7 +198,7 @@ async def u_graph(target: discord.User | discord.Member):
     pdot.set("overlap", "prism")
     pdot.set("overlap_scaling", -4)
     pdot.set("splines", "curved")
-    pdot.set("bgcolor", "#003f5c")
+    pdot.set("bgcolor", "#00000000")
 
     for node in pdot.get_nodes():
         node_name = node.get_name().strip()
@@ -206,13 +206,12 @@ async def u_graph(target: discord.User | discord.Member):
         style = node_styles.get(node_type)
 
         node.set("shape", "circle")
-        node.set("penwidth", 0.5)
-        node.set("color", "#ffffff")
+        node.set("color", "#ffffff80")
         node.set("style", "filled")
         node.set("fillcolor", style.get("fillcolor"))
         node.set("fontname", "DejaVu Sans")
         node.set("fontcolor", style.get("fontcolor"))
-        node.set("fontsize", 12.0)
+        node.set("fontsize", 14.0)
 
     for edge in pdot.get_edges():
         edge_type = edge.get("type")
@@ -225,7 +224,7 @@ async def u_graph(target: discord.User | discord.Member):
         edge.set("color", style.get("color"))
         edge.set("fontname", "DejaVu Sans")
         edge.set("fontcolor", style.get("fontcolor"))
-        edge.set("fontsize", 9.0)
+        edge.set("fontsize", 10.0)
 
 
     letters = string.ascii_lowercase
