@@ -177,15 +177,15 @@ async def u_graph(target: discord.User | discord.Member):
         graph.add_edge(f, t, type=edge.type.name)
 
     node_styles = {
-        NodeType.SELF.name: { "fillcolor": "#ff6361", "fontcolor": "#fff" },
-        NodeType.PARENT.name: { "fillcolor": "#58508d", "fontcolor": "#fff" },
-        NodeType.PARTNER.name: { "fillcolor": "#bc5090", "fontcolor": "#fff" },
-        NodeType.CHILD.name: { "fillcolor": "#ffa600", "fontcolor": "#fff" }
+        NodeType.SELF.name: { "fillcolor": "#ff6361", "fontcolor": "#ffdfdf" },
+        NodeType.PARENT.name: { "fillcolor": "#58508d", "fontcolor": "#dddce8" },
+        NodeType.PARTNER.name: { "fillcolor": "#bc5090", "fontcolor": "#25101c" },
+        NodeType.CHILD.name: { "fillcolor": "#ffa600", "fontcolor": "#332100" }
     }
 
     edge_styles = {
-        EdgeType.PARTNER.name: { "color": "#bc5090", "fontcolor": "#bc5090" },
-        EdgeType.CHILD.name: { "color": "#ffa600", "fontcolor": "#ffa600" }
+        EdgeType.PARTNER.name: { "color": "#e4b9d2", "fontcolor": "#e4b9d2" },
+        EdgeType.CHILD.name: { "color": "#ffdb99", "fontcolor": "#ffdb99" }
     }
 
     pdot = networkx.drawing.nx_pydot.to_pydot(graph)
@@ -199,6 +199,7 @@ async def u_graph(target: discord.User | discord.Member):
     pdot.set("overlap_scaling", -4)
     pdot.set("splines", "curved")
     pdot.set("bgcolor", "#003f5c")
+    pdot.set()
 
     for node in pdot.get_nodes():
         node_name = node.get_name().strip()
