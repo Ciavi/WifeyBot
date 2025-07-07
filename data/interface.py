@@ -208,9 +208,10 @@ async def u_graph(target: discord.User | discord.Member):
         node.set("fixedsize", True)
         node.set("height", 0.25)
         node.set("width", 0.25)
-        node.set("penwidth", 0.0)
+        #node.set("penwidth", 0.0)
         node.set("style", "filled")
         node.set("fillcolor", style.get("fillcolor"))
+        node.set("fontname", "DejaVu Sans")
         node.set("fontcolor", style.get("fontcolor"))
         node.set("fontsize", 6.0)
 
@@ -221,7 +222,9 @@ async def u_graph(target: discord.User | discord.Member):
         edge.set("dir", "both" if edge_type == EdgeType.PARTNER.name else "forward")
         edge.set("label", "m." if edge_type == EdgeType.PARTNER.name else "c.")
         edge.set("arrowsize", 0.25)
+        edge.set("weight", 0.5)
         edge.set("color", style.get("color"))
+        edge.set("fontname", "DejaVu Sans")
         edge.set("fontcolor", style.get("fontcolor"))
         edge.set("fontsize", 3.0)
 
