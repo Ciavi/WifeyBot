@@ -212,20 +212,20 @@ async def u_graph(target: discord.User | discord.Member):
         node.set("fillcolor", style.get("fillcolor"))
         node.set("fontname", "DejaVu Sans")
         node.set("fontcolor", style.get("fontcolor"))
-        node.set("fontsize", 10.0)
+        node.set("fontsize", 12.0)
 
     for edge in pdot.get_edges():
         edge_type = edge.get("type")
         style = edge_styles.get(edge_type)
 
         edge.set("dir", "both" if edge_type == EdgeType.PARTNER.name else "forward")
-        edge.set("label", "m." if edge_type == EdgeType.PARTNER.name else "c.")
+        edge.set("label", "is married to" if edge_type == EdgeType.PARTNER.name else "is child of")
         edge.set("arrowsize", 0.25)
         edge.set("weight", 0.5)
         edge.set("color", style.get("color"))
         edge.set("fontname", "DejaVu Sans")
         edge.set("fontcolor", style.get("fontcolor"))
-        edge.set("fontsize", 7.0)
+        edge.set("fontsize", 9.0)
 
 
     letters = string.ascii_lowercase
