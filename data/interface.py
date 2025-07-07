@@ -199,7 +199,6 @@ async def u_graph(target: discord.User | discord.Member):
     pdot.set("overlap_scaling", -4)
     pdot.set("splines", "curved")
     pdot.set("bgcolor", "#003f5c")
-    pdot.set()
 
     for node in pdot.get_nodes():
         node_name = node.get_name().strip()
