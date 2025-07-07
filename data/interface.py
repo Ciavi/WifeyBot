@@ -305,8 +305,12 @@ async def u_newgraph(target: discord.User | discord.Member):
     ax.set_frame_on(False)
     ax.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
 
+    print(list(graph.nodes))
+    print(list(graph.edges))
+
     for label, node in node_table.items():
-        color = "#FFB7B2" if node.type == NodeType.SELF else ("#A3C4F3" if node.type == NodeType.PARENT else ("#CBAACB" if node.type == NodeType.PARTNER else "#B5EAD7"))
+        color = "#FFB7B2" if node.type == NodeType.SELF else ("#A3C4F3"
+                                                              if node.type == NodeType.PARENT else ("#CBAACB" if node.type == NodeType.PARTNER else "#B5EAD7"))
         networkx.draw_networkx_nodes(graph, pos, nodelist=[label], node_color=color)
         networkx.draw_networkx_labels(graph, pos, labels={label:node.label}, font_color="#1B1C22", font_size=8)
 
