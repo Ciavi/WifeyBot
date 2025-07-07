@@ -191,13 +191,9 @@ async def u_graph(target: discord.User | discord.Member):
     pdot = networkx.drawing.nx_pydot.to_pydot(graph)
 
     pdot.set("dpi", 300)
-    pdot.set("layout", "neato")
-    pdot.set("maxiter", 100)
-    pdot.set("mode", "sgd")
-    pdot.set("model", "subset")
-    pdot.set("margin", 0.5)
+    pdot.set("layout", "sfdp")
     pdot.set("overlap", "prism")
-    pdot.set("overlap_scaling", -4)
+    pdot.set("overlap_scaling", -8)
 
     for node in pdot.get_nodes():
         node_name = node.get_name().strip()
