@@ -205,7 +205,7 @@ async def u_graph(target: discord.User | discord.Member):
         node_type = graph.nodes[node_name].get("type", "SELF")
         style = node_styles.get(node_type)
 
-        node.set("shape", "hexagon")
+        node.set("shape", "circle")
         node.set("regular", True)
         node.set("fixedsize", True)
         node.set("height", 0.25)
