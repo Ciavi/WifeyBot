@@ -211,7 +211,7 @@ async def u_graph(target: discord.User | discord.Member):
         node.set("height", 0.25)
         node.set("width", 0.25)
         node.set("penwidth", 0.5)
-        node.set("pencolor", "#fff")
+        node.set("pencolor", "whitesmoke")
         node.set("style", "filled")
         node.set("fillcolor", style.get("fillcolor"))
         node.set("fontname", "DejaVu Sans")
