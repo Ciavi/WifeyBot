@@ -206,6 +206,7 @@ async def u_graph(target: discord.User | discord.Member):
         style = node_styles.get(node_type)
 
         node.set("shape", "circle")
+        node.set("penwidth", 2.0)
         node.set("color", "#ffffff80")
         node.set("style", "filled")
         node.set("fillcolor", style.get("fillcolor"))
