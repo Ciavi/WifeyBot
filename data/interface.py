@@ -177,10 +177,10 @@ async def u_graph(target: discord.User | discord.Member):
         graph.add_edge(f, t, type=edge.type.name)
 
     node_styles = {
-        NodeType.SELF.name: { "fillcolor": "#ffb7b2", "fontcolor": "#1b1c22" },
-        NodeType.PARENT.name: { "fillcolor": "#a3c4f3", "fontcolor": "#1b1c22" },
-        NodeType.PARTNER.name: { "fillcolor": "#cbaacb", "fontcolor": "#1b1c22" },
-        NodeType.CHILD.name: { "fillcolor": "#b5ead7", "fontcolor": "#1b1c22" }
+        NodeType.SELF.name: { "fillcolor": "#ffb7b2", "fontcolor": "#fff" },
+        NodeType.PARENT.name: { "fillcolor": "#a3c4f3", "fontcolor": "#fff" },
+        NodeType.PARTNER.name: { "fillcolor": "#cbaacb", "fontcolor": "#fff" },
+        NodeType.CHILD.name: { "fillcolor": "#b5ead7", "fontcolor": "#fff" }
     }
 
     edge_styles = {
@@ -194,7 +194,9 @@ async def u_graph(target: discord.User | discord.Member):
     pdot.set("layout", "sfdp")
     pdot.set("beautify", True)
     pdot.set("overlap", "prism")
-    pdot.set("overlap_scaling", -8)
+    pdot.set("overlap_scaling", -4)
+    pdot.set("smoothing", "avg_dist")
+    pdot.set("bgcolor", "#1b1c22")
 
     for node in pdot.get_nodes():
         node_name = node.get_name().strip()
