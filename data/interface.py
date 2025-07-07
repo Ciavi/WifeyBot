@@ -191,11 +191,13 @@ async def u_graph(target: discord.User | discord.Member):
     pdot = networkx.drawing.nx_pydot.to_pydot(graph)
 
     pdot.set("dpi", 300)
-    pdot.set("layout", "sfdp")
-    pdot.set("beautify", True)
+    pdot.set("layout", "neato")
+    pdot.set("mode", "hier")
+    pdot.set("model", "subset")
+    pdot.set("normalize", True)
     pdot.set("overlap", "prism")
     pdot.set("overlap_scaling", -4)
-    pdot.set("smoothing", "avg_dist")
+    pdot.set("splines", "curved")
     pdot.set("bgcolor", "#1b1c22")
 
     for node in pdot.get_nodes():
@@ -208,7 +210,8 @@ async def u_graph(target: discord.User | discord.Member):
         node.set("fixedsize", True)
         node.set("height", 0.25)
         node.set("width", 0.25)
-        #node.set("penwidth", 0.0)
+        node.set("penwidth", 0.5)
+        node.set("pencolor", "#fff")
         node.set("style", "filled")
         node.set("fillcolor", style.get("fillcolor"))
         node.set("fontname", "DejaVu Sans")
