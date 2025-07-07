@@ -318,7 +318,7 @@ async def u_newgraph(target: discord.User | discord.Member):
         color = "#CBAACB" if edge.type == EdgeType.PARTNER else "#B5EAD7"
         direction = "<->" if edge.type == EdgeType.PARTNER else "->"
         label = "m." if edge.type == EdgeType.PARTNER else "c."
-        networkx.draw_networkx_edges(graph, pos, edgelist=[(f, t)], connectionstyle=f"arc3,rad={0.075 if f != t else 0.3}", width=0.5, arrowstyle=direction, arrowsize=7, edge_color=color)
+        networkx.draw_networkx_edges(graph, pos, edgelist=[(f, t)], connectionstyle=f"arc3,rad={0.075 if f != t else 0.5}", width=0.5, arrowstyle=direction, arrowsize=7, edge_color=color)
         networkx.draw_networkx_edge_labels(graph, pos, edge_labels={(f, t): label}, font_color=color, font_size=4, bbox={ "fc": "#00000000", "ec": "#00000000", "boxstyle": "circle" })
 
     letters = string.ascii_lowercase
