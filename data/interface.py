@@ -7,7 +7,7 @@ import discord
 import matplotlib.pyplot as plt
 import networkx
 import pydot
-from neomodel import db
+from neomodel import adb
 
 from data.models import User
 
@@ -147,7 +147,7 @@ async def u_relation_between(invoker: discord.User | discord.Member, target: dis
         relationships(path) AS rel_objs
     """
 
-    results, _ = db.query(query=query)
+    results, _ = await adb.cypher_query(query=query)
     node_objs, rel_objs = results[0]
 
     node_names = [n["user_name"] for n in node_objs]
