@@ -144,7 +144,7 @@ async def u_relation_between(invoker: discord.User | discord.Member, target: dis
     WHERE all(rel IN r WHERE type(rel) <> 'IS_PARENT_OF')
     RETURN
         nodes(path) as node_objs,
-        [rel in relationships(path) | {{type: rel, from: startNode(rel), to: endNode(rel)}}] as rel_objs
+        [rel in relationships(path) | {{type: type(rel), from: startNode(rel), to: endNode(rel)}}] as rel_objs
     """
 
     results, _ = await adb.cypher_query(query=query)
