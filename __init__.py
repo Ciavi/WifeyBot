@@ -12,7 +12,7 @@ from os import environ as env
 import system.configuration
 import system.historian
 from data.interface import u_marry, read_or_create_user, u_divorce, u_emancipate, u_abandon, u_adopt, u_are_related, \
-    u_has_parent, u_graph, u_graph
+    u_has_parent, u_graph, u_graph, u_relation_between
 from discord.views import MarryView
 
 load_dotenv()
@@ -181,6 +181,17 @@ async def graph(interaction: Interaction, user: Member = None):
 
     await interaction.response.send_message(embed=embed, file=file)
 
+
+@bot.tree.command(name="relate", description="Get how user_a (default = you) is related to user_b")
+@app_commands.describe(user_a="First user")
+@app_commands.describe(user_b="Second user")
+async def relate(interaction: Interaction, user_b: Member, user_a: Member = None):
+    if user_a is None:
+        user_a = interaction.user
+
+    path, relationship = u_relation_between(invoker=user_a, target=user_b)
+
+    await interaction.response.send_message(content=f"{user_a.nick} is {user_b.nick}'s {relationship[0]}.\n -# {path}")
 
 discord_logger = logging.getLogger('discord')
 discord_logger.setLevel('DEBUG')

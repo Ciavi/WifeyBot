@@ -7,6 +7,7 @@ import discord
 import matplotlib.pyplot as plt
 import networkx
 import pydot
+from neomodel import db
 
 from data.models import User
 
@@ -93,6 +94,87 @@ async def u_emancipate(invoker: discord.User | discord.Member):
 
     await d_invoker.children.disconnect(d_target)
     await d_target.parent.disconnect(d_invoker)
+
+
+def classify_relationship(path: list[str]):
+    if path.count("HAS_CHILD") >= 4:
+        return "Distant relative", "Distant relative"
+
+    match path:
+        case ["HAS_CHILD"]:
+            return "Parent", "Child"
+        case ["HAS_CHILD", "HAS_CHILD"]:
+            return "Grandparent", "Grandchild"
+        case ["HAS_CHILD", "HAS_CHILD", "HAS_CHILD"]:
+            return "Great-grandparent", "Great-grandchild"
+
+        case ["IS_PARTNER_WITH"]:
+            return "Partner", "Partner"
+        case ["HAS_CHILD", "IS_PARTNER_WITH"]:
+            return "Parent-in-law", "Child-in-law"
+        case ["IS_PARTNER_WITH", "HAS_CHILD"]:
+            return "Step-parent", "Step-child"
+
+        case ["HAS_CHILD", "HAS_CHILD", "IS_PARTNER_WITH"]:
+            return "Grandparent-in-law", "Grandchild-in-law"
+        case ["IS_PARTNER_WITH", "HAS_CHILD", "HAS_CHILD"]:
+            return "Step-grandparent", "Step-grandchild"
+
+        case ["←HAS_CHILD", "HAS_CHILD"]:
+            return "Sibling", "Sibling"
+
+        case ["←HAS_CHILD", "HAS_CHILD", "HAS_CHILD"]:
+            return "Aunt/Uncle", "Niece/Nephew"
+        case ["←HAS_CHILD", "HAS_CHILD", "HAS_CHILD", "HAS_CHILD"]:
+            return "Great-Aunt/Uncle", "Grandniece/Nephew"
+
+        case ["←HAS_CHILD", "←HAS_CHILD", "HAS_CHILD", "HAS_CHILD"]:
+            return "Cousin", "Cousin"
+
+        case []:
+            return "Not related", "Not related"
+
+        case _:
+            return "Distant relative", "Distant relative"
+
+
+async def u_relation_between(invoker: discord.User | discord.Member, target: discord.User | discord.Member):
+    query = f"""
+    MATCH path=shortestPath((a:User {{ user_id: {invoker.id} }})-[r*..6]-(b:User {{ user_id: {target.id} }})
+    WHERE all(rel IN r WHERE type(rel) <> 'IS_PARENT_OF')
+    RETURN
+        nodes(path) AS node_objs,
+        relationships(path) AS rel_objs
+    """
+
+    results, _ = db.query(query=query)
+    node_objs, rel_objs = results[0]
+
+    node_names = [n["user_name"] for n in node_objs]
+
+    steps = []
+    rel_types = []
+
+    for i in range(len(rel_objs)):
+        start_id = rel_objs[i].start
+        end_id = rel_objs[i].end
+        rel_type = rel_objs[i].type
+
+        if node_objs[i].id == start_id and node_objs[i + 1].id == end_id:
+            direction = "→"
+            rel_types.append(rel_type)
+        else:
+            direction = "←"
+            rel_types.append('←' + rel_type)
+
+        steps.append(node_names[i])
+        steps.append(f"{direction}{rel_type}")
+
+    steps.append(node_names[-1])
+    path_trace = " ".join(steps)
+    relationship = classify_relationship(rel_types)
+
+    return path_trace, relationship
 
 
 class NodeType(enum.IntEnum):
