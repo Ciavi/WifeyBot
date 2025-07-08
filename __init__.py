@@ -189,7 +189,7 @@ async def relate(interaction: Interaction, user_b: Member, user_a: Member = None
     if user_a is None:
         user_a = interaction.user
 
-    path, relationship = u_relation_between(invoker=user_a, target=user_b)
+    path, relationship = await u_relation_between(invoker=user_a, target=user_b)
 
     await interaction.response.send_message(content=f"{user_a.nick} is {user_b.nick}'s {relationship[0]}.\n -# {path}")
 
