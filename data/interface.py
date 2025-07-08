@@ -165,7 +165,7 @@ async def u_relation_between(invoker: discord.User | discord.Member, target: dis
             rel_types.append(rel_type)
         else:
             direction = "←"
-            rel_types.append('←' + rel_type)
+            rel_types.append(f"←{rel_type}")
 
         steps.append(node_names[i])
         steps.append(f"{direction}{rel_type}")
