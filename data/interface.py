@@ -105,16 +105,16 @@ def classify_relationship(path: list[str]):
         case ["HAS_CHILD", "HAS_CHILD", "HAS_CHILD"]:
             return "Great-grandparent", "Great-grandchild"
 
-        case ["IS_PARTNER_WITH"]:
+        case ["IS_PARTNER_WITH"] | ["←IS_PARTNER_WITH"]:
             return "Partner", "Partner"
-        case ["HAS_CHILD", "IS_PARTNER_WITH"]:
+        case ["HAS_CHILD", "IS_PARTNER_WITH"] | ["HAS_CHILD", "←IS_PARTNER_WITH"]:
             return "Parent-in-law", "Child-in-law"
-        case ["IS_PARTNER_WITH", "HAS_CHILD"]:
+        case ["IS_PARTNER_WITH", "HAS_CHILD"] | ["←IS_PARTNER_WITH", "HAS_CHILD"]:
             return "Step-parent", "Step-child"
 
-        case ["HAS_CHILD", "HAS_CHILD", "IS_PARTNER_WITH"]:
+        case ["HAS_CHILD", "HAS_CHILD", "IS_PARTNER_WITH"] | ["HAS_CHILD", "HAS_CHILD", "←IS_PARTNER_WITH"]:
             return "Grandparent-in-law", "Grandchild-in-law"
-        case ["IS_PARTNER_WITH", "HAS_CHILD", "HAS_CHILD"]:
+        case ["IS_PARTNER_WITH", "HAS_CHILD", "HAS_CHILD"] | ["←IS_PARTNER_WITH", "HAS_CHILD", "HAS_CHILD"]:
             return "Step-grandparent", "Step-grandchild"
 
         case ["←HAS_CHILD", "HAS_CHILD"]:
@@ -156,8 +156,6 @@ async def u_relation_between(invoker: discord.User | discord.Member, target: dis
         start_id = rel_objs[i]["from"]["user_id"]
         end_id = rel_objs[i]["to"]["user_id"]
         rel_type = rel_objs[i]["type"]
-
-        print(f"{start_id}-{rel_type}-{end_id}")
 
         if node_objs[i]["user_id"] == start_id and node_objs[i + 1]["user_id"] == end_id:
             direction = "→"
