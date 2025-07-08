@@ -157,6 +157,8 @@ async def u_relation_between(invoker: discord.User | discord.Member, target: dis
         end_id = rel_objs[i]["to"]["user_id"]
         rel_type = rel_objs[i]["type"]
 
+        print(f"{start_id}-{rel_type}-{end_id}")
+
         if node_objs[i]["user_id"] == start_id and node_objs[i + 1]["user_id"] == end_id:
             direction = "→"
             rel_types.append(rel_type)
