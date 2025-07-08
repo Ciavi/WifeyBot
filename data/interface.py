@@ -97,9 +97,6 @@ async def u_emancipate(invoker: discord.User | discord.Member):
 
 
 def classify_relationship(path: list[str]):
-    if path.count("HAS_CHILD") >= 4:
-        return "Distant relative", "Distant relative"
-
     match path:
         case ["HAS_CHILD"]:
             return "Parent", "Child"
@@ -160,7 +157,7 @@ async def u_relation_between(invoker: discord.User | discord.Member, target: dis
         end_id = rel_objs[i]["to"]["user_id"]
         rel_type = rel_objs[i]["type"]
 
-        if node_objs[i].id == start_id and node_objs[i + 1].id == end_id:
+        if node_objs[i]["user_id"] == start_id and node_objs[i + 1]["user_id"] == end_id:
             direction = "→"
             rel_types.append(rel_type)
         else:
