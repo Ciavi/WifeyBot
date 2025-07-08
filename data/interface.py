@@ -143,8 +143,8 @@ async def u_relation_between(invoker: discord.User | discord.Member, target: dis
     MATCH path=shortestPath((a:User {{ user_id: {invoker.id} }})-[r*..6]-(b:User {{ user_id: {target.id} }}))
     WHERE all(rel IN r WHERE type(rel) <> 'IS_PARENT_OF')
     RETURN
-        nodes(path) AS node_objs,
-        relationships(path) AS rel_objs
+        nodes(path) as node_objs,
+        [rel in relationships(path) | {{type: rel, from: startNode(rel), to: endNode(rel)}}] as rel_objs
     """
 
     results, _ = await adb.cypher_query(query=query)
@@ -156,9 +156,9 @@ async def u_relation_between(invoker: discord.User | discord.Member, target: dis
     rel_types = []
 
     for i in range(len(rel_objs)):
-        start_id = rel_objs[i].start
-        end_id = rel_objs[i].end
-        rel_type = rel_objs[i].type
+        start_id = rel_objs[i]["from"]["user_id"]
+        end_id = rel_objs[i]["to"]["user_id"]
+        rel_type = rel_objs[i]["type"]
 
         if node_objs[i].id == start_id and node_objs[i + 1].id == end_id:
             direction = "→"
