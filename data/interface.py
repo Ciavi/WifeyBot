@@ -140,7 +140,7 @@ def classify_relationship(path: list[str]):
 
 async def u_relation_between(invoker: discord.User | discord.Member, target: discord.User | discord.Member):
     query = f"""
-    MATCH path=shortestPath((a:User {{ user_id: {invoker.id} }})-[r*..6]-(b:User {{ user_id: {target.id} }})
+    MATCH path=shortestPath((a:User {{ user_id: {invoker.id} }})-[r*..6]-(b:User {{ user_id: {target.id} }}))
     WHERE all(rel IN r WHERE type(rel) <> 'IS_PARENT_OF')
     RETURN
         nodes(path) AS node_objs,
