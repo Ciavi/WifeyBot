@@ -100,22 +100,36 @@ def classify_relationship(path: list[str]):
     match path:
         case ["HAS_CHILD"]:
             return "Parent", "Child"
+        case ["←HAS_CHILD"]:
+            return "Child", "Parent"
         case ["HAS_CHILD", "HAS_CHILD"]:
             return "Grandparent", "Grandchild"
+        case ["←HAS_CHILD", "←HAS_CHILD"]:
+            return "Grandchild", "Grandparent"
         case ["HAS_CHILD", "HAS_CHILD", "HAS_CHILD"]:
             return "Great-grandparent", "Great-grandchild"
+        case ["←HAS_CHILD", "←HAS_CHILD", "←HAS_CHILD"]:
+            return "Great-grandchild", "Great-grandparent"
 
         case ["IS_PARTNER_WITH"] | ["←IS_PARTNER_WITH"]:
             return "Partner", "Partner"
         case ["HAS_CHILD", "IS_PARTNER_WITH"] | ["HAS_CHILD", "←IS_PARTNER_WITH"]:
             return "Parent-in-law", "Child-in-law"
+        case ["IS_PARTNER_WITH", "←HAS_CHILD"] | ["←IS_PARTNER_WITH", "←HAS_CHILD"]:
+            return "Child-in-law", "Parent-in-law"
         case ["IS_PARTNER_WITH", "HAS_CHILD"] | ["←IS_PARTNER_WITH", "HAS_CHILD"]:
             return "Step-parent", "Step-child"
+        case ["←HAS_CHILD", "IS_PARTNER_WITH"] | ["←HAS_CHILD", "←IS_PARTNER_WITH"]:
+            return "Step-child", "Step-parent"
 
         case ["HAS_CHILD", "HAS_CHILD", "IS_PARTNER_WITH"] | ["HAS_CHILD", "HAS_CHILD", "←IS_PARTNER_WITH"]:
             return "Grandparent-in-law", "Grandchild-in-law"
+        case ["IS_PARTNER_WITH", "←HAS_CHILD", "←HAS_CHILD"] | ["←IS_PARTNER_WITH", "←HAS_CHILD", "←HAS_CHILD"]:
+            return "Grandchild-in-law", "Grandparent-in-law"
         case ["IS_PARTNER_WITH", "HAS_CHILD", "HAS_CHILD"] | ["←IS_PARTNER_WITH", "HAS_CHILD", "HAS_CHILD"]:
             return "Step-grandparent", "Step-grandchild"
+        case ["←HAS_CHILD", "←HAS_CHILD", "IS_PARTNER_WITH"] | ["←HAS_CHILD", "←HAS_CHILD", "←IS_PARTNER_WITH"]:
+            return "Step-grandchild", "Step-grandparent"
 
         case ["←HAS_CHILD", "HAS_CHILD"]:
             return "Sibling", "Sibling"
