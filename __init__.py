@@ -113,6 +113,39 @@ async def embed_graph(invoker: Member, target: Member):
     return embed, file
 
 
+async def embed_info(target: Member):
+    u_target = await read_or_create_user(user_id=target.id)
+    parent = await u_target.parent.single()
+    partners = await u_target.partners.all()
+    children = await u_target.children.all()
+
+    partner_count = int(len(partners) / 2)
+    children_count = len(children)
+
+    embed = Embed(colour=Colour.random(), title=f"{target.nick if target.nick is not None else target.name}")
+    embed.description = f"Has {partner_count} partners and {children_count} children.\n{"Has a parent." if parent is not None else "Is orphan."}"
+
+    lines = []
+    if parent is not None:
+        lines.append(f"**Parent:** {parent.user_name}")
+
+        siblings = await parent.children.all()
+
+        for i, sibling in enumerate(siblings):
+            if sibling.user_name == target.name:
+                continue
+
+            lines.append(f"**Sibling#{i}:** {sibling.user_name}")
+
+    for i, partner in enumerate(partners):
+        lines.append(f"**Partner#{i}:** {partner.user_name}")
+
+    for i, child in enumerate(children):
+        lines.append(f"Child#{i}:** {child.user_name}")
+
+    return embed, '\n'.join(lines)
+
+
 @bot.event
 async def on_ready():
     logger.info(f"Logged in as {bot.user.name}#{bot.user.discriminator}")
@@ -198,6 +231,21 @@ async def relate(interaction: Interaction, user_b: Member, user_a: Member = None
     path, relationship = await u_relation_between(invoker=user_a, target=user_b)
 
     await interaction.edit_original_response(content=f"{user_a.nick if user_a.nick is not None else user_a.name} is {user_b.nick if user_b.nick is not None else user_b.name}'s {relationship[0].lower()}.\n-# {path}")
+
+
+@bot.tree.command(name="info", description="Show a your or user's information, including immediate family (parent, partners, children)")
+@app_commands.describe(user="The user you wanna see")
+async def info(interaction: Interaction, user: Member = None):
+    #Command may take longer than 5 seconds
+    await interaction.response.defer()
+
+    if user is None:
+        user = interaction.user
+
+    embed, message = await embed_info(user)
+
+    await interaction.edit_original_response(embed=embed)
+    await interaction.followup.send(message)
 
 discord_logger = logging.getLogger('discord')
 discord_logger.setLevel('DEBUG')
