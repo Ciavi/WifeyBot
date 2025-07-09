@@ -59,7 +59,7 @@ async def embed_marry(invoker: Member, target: Member):
 
     timestamp = int(time.time()) + 60
 
-    embed = Embed(colour=Colour.random(), title=f"{target.nick}, {invoker.nick} longs for you.")
+    embed = Embed(colour=Colour.random(), title=f"{target.nick if target.nick is not None else target.name}, {invoker.nick if invoker.nick is not None else invoker.name} longs for you.")
     embed.description = (f"Will you make them your partner? <:UwU_GT:1278010153806987317>\n"
                          f"They have {partner_count} partners and {children_count} children.")
     embed.add_field(name="Expires in", value=f"<t:{timestamp}:R>", inline=False)
@@ -93,7 +93,7 @@ async def embed_adopt(invoker: Member, target: Member):
 
     timestamp = int(time.time()) + 60
 
-    embed = Embed(colour=Colour.random(), title=f"{target.nick}, {invoker.nick} wants to adopt you.")
+    embed = Embed(colour=Colour.random(), title=f"{target.nick if target.nick is not None else target.name}, {invoker.nick if invoker.nick is not None else invoker.name} wants to adopt you.")
     embed.description = (f"Will you become their adopted child? <:UwU_GT:1278010153806987317>\n"
                          f"They have {partner_count} partners and {children_count} children.")
     embed.add_field(name="Expires in", value=f"<t:{timestamp}:R>", inline=False)
@@ -107,7 +107,7 @@ async def embed_graph(invoker: Member, target: Member):
 
     file = File(filename)
 
-    embed = Embed(colour=Colour.random(), title=f"Here's the graph you requested, {invoker.nick}")
+    embed = Embed(colour=Colour.random(), title=f"Here's the graph you requested, {invoker.nick if invoker.nick is not None else invoker.name}")
     embed.set_image(url=f"attachment://{target.id}-{graph_uid}.png")
 
     return embed, file
@@ -191,7 +191,7 @@ async def relate(interaction: Interaction, user_b: Member, user_a: Member = None
 
     path, relationship = await u_relation_between(invoker=user_a, target=user_b)
 
-    await interaction.response.send_message(content=f"{user_a.nick} is {user_b.nick}'s {relationship[0]}.\n-# {path}")
+    await interaction.response.send_message(content=f"{user_a.nick if user_a.nick is not None else user_a.name} is {user_b.nick if user_b.nick is not None else user_b.name}'s {relationship[0]}.\n-# {path}")
 
 discord_logger = logging.getLogger('discord')
 discord_logger.setLevel('DEBUG')
