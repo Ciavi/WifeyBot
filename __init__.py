@@ -124,6 +124,7 @@ async def embed_info(target: Member):
 
     embed = Embed(colour=Colour.random(), title=f"{target.nick if target.nick is not None else target.name}")
     embed.description = f"Has {partner_count} partners and {children_count} children.\n{"Has a parent." if parent is not None else "Is orphan."}"
+    embed.set_thumbnail(url=target.avatar.url)
 
     lines = []
     if parent is not None:
