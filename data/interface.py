@@ -250,6 +250,12 @@ async def u_graph(target: discord.User | discord.Member):
         add_node(Node(t_parent.user_name, NodeType.PARENT))
         add_edge(Edge(d_target.user_name, t_parent.user_name, EdgeType.CHILD))
 
+        tt_partners: list[User] = await t_parent.partners.all()
+
+        for tt_partner in tt_partners:
+            add_node(Node(tt_partner.user_name, NodeType.PARTNER))
+            add_edge(Edge(t_parent.user_name, tt_partner.user_name, EdgeType.PARTNER))
+
     for t_partner in t_partners:
         add_node(Node(t_partner.user_name, NodeType.PARTNER))
         add_edge(Edge(d_target.user_name, t_partner.user_name, EdgeType.PARTNER))
