@@ -177,6 +177,9 @@ async def abandon(interaction: Interaction, child: Member):
 @bot.tree.command(name="graph", description="Get your or a user's family graph")
 @app_commands.describe(user="Whose graph you want to see")
 async def graph(interaction: Interaction, user: Member = None):
+    # Command may take longer than 5 seconds
+    await interaction.response.defer()
+
     embed, file = await embed_graph(invoker=interaction.user, target=interaction.user if user is None else user)
 
     await interaction.response.send_message(embed=embed, file=file)
@@ -186,6 +189,9 @@ async def graph(interaction: Interaction, user: Member = None):
 @app_commands.describe(user_a="First user")
 @app_commands.describe(user_b="Second user")
 async def relate(interaction: Interaction, user_b: Member, user_a: Member = None):
+    # Command may take longer than 5 seconds
+    await interaction.response.defer()
+
     if user_a is None:
         user_a = interaction.user
 
