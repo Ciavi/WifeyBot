@@ -91,7 +91,7 @@ async def embed_adopt(invoker: Member, target: Member):
     partner_count = int(len(partners) / 2)
     children_count = len(children)
 
-    timestamp = int(time.time()) + 60
+    timestamp = int(time.time()) + 60*5
 
     embed = Embed(colour=Colour.random(), title=f"{target.nick if target.nick is not None else target.name}, {invoker.nick if invoker.nick is not None else invoker.name} wants to adopt you.")
     embed.description = (f"Will you become their adopted child? <:UwU_GT:1278010153806987317>\n"
