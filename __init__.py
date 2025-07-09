@@ -135,13 +135,13 @@ async def embed_info(target: Member):
         siblings = filter(lambda x: x.user_id != target.id, siblings)
         siblings = [f"`{x.user_name}`" for x in siblings]
 
-        lines.append(f"**Siblings:** {', '.join(siblings).translate(str.maketrans({ '_': r'\_' }))}.")
+        lines.append(f"**Siblings:** {', '.join(siblings)}.")
 
     partners = [f"`{x.user_name}`" for x in partners]
-    lines.append(f"**Partners:** {', '.join(partners).translate(str.maketrans({ '_': r'\_' }))}.")
+    lines.append(f"**Partners:** {', '.join(partners)}.")
 
     children = [f"`{x.user_name}`" for x in children]
-    lines.append(f"**Children:** {', '.join(children).translate(str.maketrans({ '_': r'\_' }))}.")
+    lines.append(f"**Children:** {', '.join(children)}.")
 
     return embed, '\n'.join(lines)
 
