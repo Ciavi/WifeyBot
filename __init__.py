@@ -120,7 +120,7 @@ async def embed_info(target: Member):
     partners = [k for k, v in groupby(sorted(await u_target.partners.all(), key=lambda x: x.user_id))]
     children = [k for k, v in groupby(sorted(await u_target.children.all(), key=lambda x: x.user_id))]
 
-    partner_count = int(len(partners) / 2)
+    partner_count = len(partners)
     children_count = len(children)
 
     embed = Embed(colour=Colour.random(), title=f"{target.nick if target.nick is not None else target.name}")
