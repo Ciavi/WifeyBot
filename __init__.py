@@ -182,7 +182,7 @@ async def graph(interaction: Interaction, user: Member = None):
 
     embed, file = await embed_graph(invoker=interaction.user, target=interaction.user if user is None else user)
 
-    await interaction.response.send_message(embed=embed, file=file)
+    await interaction.edit_original_response(embed=embed, file=file)
 
 
 @bot.tree.command(name="relate", description="Get how user_a (default = you) is related to user_b")
@@ -197,7 +197,7 @@ async def relate(interaction: Interaction, user_b: Member, user_a: Member = None
 
     path, relationship = await u_relation_between(invoker=user_a, target=user_b)
 
-    await interaction.response.send_message(content=f"{user_a.nick if user_a.nick is not None else user_a.name} is {user_b.nick if user_b.nick is not None else user_b.name}'s {relationship[0].lower()}.\n-# {path}")
+    await interaction.edit_original_response(content=f"{user_a.nick if user_a.nick is not None else user_a.name} is {user_b.nick if user_b.nick is not None else user_b.name}'s {relationship[0].lower()}.\n-# {path}")
 
 discord_logger = logging.getLogger('discord')
 discord_logger.setLevel('DEBUG')
