@@ -182,7 +182,7 @@ async def graph(interaction: Interaction, user: Member = None):
 
     embed, file = await embed_graph(invoker=interaction.user, target=interaction.user if user is None else user)
 
-    await interaction.edit_original_response(embed=embed, file=file)
+    await interaction.edit_original_response(embed=embed, attachments=[file])
 
 
 @bot.tree.command(name="relate", description="Get how user_a (default = you) is related to user_b")
