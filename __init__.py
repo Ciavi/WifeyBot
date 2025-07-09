@@ -129,21 +129,19 @@ async def embed_info(target: Member):
 
     lines = []
     if parent is not None:
-        lines.append(f"**Parent:** {parent.user_name}")
+        lines.append(f"**Parent:** `{parent.user_name}`.")
 
         siblings = [k for k, v in groupby(sorted(await parent.children.all(), key=lambda x: x.user_id))]
+        siblings = filter(lambda x: x.user_id != target.id, siblings)
+        siblings = [f"`{x.user_name}`" for x in siblings]
 
-        for i, sibling in enumerate(siblings):
-            if sibling.user_name == target.name:
-                continue
+        lines.append(f"**Siblings:** {', '.join(siblings).translate(str.maketrans({ '_': r'\_' }))}.")
 
-            lines.append(f"**Sibling#{i+1}:** {sibling.user_name}")
+    partners = [f"`{x.user_name}`" for x in partners]
+    lines.append(f"**Partners:** {', '.join(partners).translate(str.maketrans({ '_': r'\_' }))}.")
 
-    for i, partner in enumerate(partners):
-        lines.append(f"**Partner#{i+1}:** {partner.user_name}")
-
-    for i, child in enumerate(children):
-        lines.append(f"**Child#{i+1}:** {child.user_name}")
+    children = [f"`{x.user_name}`" for x in children]
+    lines.append(f"**Children:** {', '.join(children).translate(str.maketrans({ '_': r'\_' }))}.")
 
     return embed, '\n'.join(lines)
 
