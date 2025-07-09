@@ -122,8 +122,12 @@ def classify_relationship(path: list[str]):
 
         case ["←HAS_CHILD", "HAS_CHILD", "HAS_CHILD"]:
             return "Aunt/Uncle", "Niece/Nephew"
+        case ["←HAS_CHILD", "←HAS_CHILD", "HAS_CHILD"]:
+            return "Niece/Nephew", "Aunt/Uncle"
         case ["←HAS_CHILD", "HAS_CHILD", "HAS_CHILD", "HAS_CHILD"]:
             return "Great-Aunt/Uncle", "Grandniece/Nephew"
+        case ["←HAS_CHILD", "←HAS_CHILD", "←HAS_CHILD", "HAS_CHILD"]:
+            return "Grandniece/Nephew", "Great-Aunt/Uncle"
 
         case ["←HAS_CHILD", "←HAS_CHILD", "HAS_CHILD", "HAS_CHILD"]:
             return "Cousin", "Cousin"
