@@ -191,7 +191,7 @@ async def relate(interaction: Interaction, user_b: Member, user_a: Member = None
 
     path, relationship = await u_relation_between(invoker=user_a, target=user_b)
 
-    await interaction.response.send_message(content=f"{user_a.nick if user_a.nick is not None else user_a.name} is {user_b.nick if user_b.nick is not None else user_b.name}'s {relationship[0]}.\n-# {path}")
+    await interaction.response.send_message(content=f"{user_a.nick if user_a.nick is not None else user_a.name} is {user_b.nick if user_b.nick is not None else user_b.name}'s {relationship[0].lower()}.\n-# {path}")
 
 discord_logger = logging.getLogger('discord')
 discord_logger.setLevel('DEBUG')
