@@ -117,8 +117,8 @@ async def embed_graph(invoker: Member, target: Member):
 async def embed_info(target: Member):
     u_target = await read_or_create_user(user_id=target.id)
     parent = await u_target.parent.single()
-    partners = [k for k, v in groupby(sorted(await u_target.partners.all()), key=lambda x: x.user_id)]
-    children = [k for k, v in groupby(sorted(await u_target.children.all()), key=lambda x: x.user_id)]
+    partners = [k for k, v in groupby(sorted(await u_target.partners.all(), key=lambda x: x.user_id))]
+    children = [k for k, v in groupby(sorted(await u_target.children.all(), key=lambda x: x.user_id))]
 
     partner_count = int(len(partners) / 2)
     children_count = len(children)
@@ -131,7 +131,7 @@ async def embed_info(target: Member):
     if parent is not None:
         lines.append(f"**Parent:** {parent.user_name}")
 
-        siblings = [k for k, v in groupby(sorted(await parent.children.all()), key=lambda x: x.user_id)]
+        siblings = [k for k, v in groupby(sorted(await parent.children.all(), key=lambda x: x.user_id))]
 
         for i, sibling in enumerate(siblings):
             if sibling.user_name == target.name:
