@@ -137,11 +137,13 @@ async def embed_info(target: Member):
 
         lines.append(f"**Siblings:** {', '.join(siblings)}.")
 
-    partners = [f"`{x.user_name}`" for x in partners]
-    lines.append(f"**Partners:** {', '.join(partners)}.")
+    if partner_count > 0:
+        partners = [f"`{x.user_name}`" for x in partners]
+        lines.append(f"**Partners:** {', '.join(partners)}.")
 
-    children = [f"`{x.user_name}`" for x in children]
-    lines.append(f"**Children:** {', '.join(children)}.")
+    if children_count > 0:
+        children = [f"`{x.user_name}`" for x in children]
+        lines.append(f"**Children:** {', '.join(children)}.")
 
     return embed, '\n'.join(lines)
 
@@ -245,7 +247,9 @@ async def info(interaction: Interaction, user: Member = None):
     embed, message = await embed_info(user)
 
     await interaction.edit_original_response(embed=embed)
-    await interaction.followup.send(message)
+
+    if len(message) > 1:
+        await interaction.followup.send(message)
 
 discord_logger = logging.getLogger('discord')
 discord_logger.setLevel('DEBUG')
