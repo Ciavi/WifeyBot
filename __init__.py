@@ -116,8 +116,8 @@ async def embed_graph(invoker: Member, target: Member):
 async def embed_info(target: Member):
     u_target = await read_or_create_user(user_id=target.id)
     parent = await u_target.parent.single()
-    partners = await u_target.partners.all()
-    children = await u_target.children.all()
+    partners = list(dict.fromkeys(await u_target.partners.all()))
+    children = list(dict.fromkeys(await u_target.children.all()))
 
     partner_count = int(len(partners) / 2)
     children_count = len(children)
@@ -130,19 +130,19 @@ async def embed_info(target: Member):
     if parent is not None:
         lines.append(f"**Parent:** {parent.user_name}")
 
-        siblings = await parent.children.all()
+        siblings = list(dict.fromkeys(await parent.children.all()))
 
         for i, sibling in enumerate(siblings):
             if sibling.user_name == target.name:
                 continue
 
-            lines.append(f"**Sibling#{i}:** {sibling.user_name}")
+            lines.append(f"**Sibling#{i+1}:** {sibling.user_name}")
 
     for i, partner in enumerate(partners):
-        lines.append(f"**Partner#{i}:** {partner.user_name}")
+        lines.append(f"**Partner#{i+1}:** {partner.user_name}")
 
     for i, child in enumerate(children):
-        lines.append(f"Child#{i}:** {child.user_name}")
+        lines.append(f"**Child#{i+1}:** {child.user_name}")
 
     return embed, '\n'.join(lines)
 
