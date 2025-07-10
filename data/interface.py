@@ -163,6 +163,10 @@ async def u_relation_between(invoker: discord.User | discord.Member, target: dis
     """
 
     results, _ = await adb.cypher_query(query=query)
+
+    if not results:
+        return "UNRELATED", ("Not related", "Not related")
+
     node_objs, rel_objs = results[0]
 
     node_names = [n["user_name"] for n in node_objs]
