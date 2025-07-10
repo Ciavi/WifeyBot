@@ -133,6 +133,8 @@ def classify_relationship(path: list[str]):
 
         case ["←HAS_CHILD", "HAS_CHILD"]:
             return "Sibling", "Sibling"
+        case ["←HAS_CHILD", "IS_PARTNER_WITH", "HAS_CHILD"] | ["←HAS_CHILD", "←IS_PARTNER_WITH", "HAS_CHILD"]:
+            return "Step-sibling", "Step-sibling"
 
         case ["←HAS_CHILD", "HAS_CHILD", "HAS_CHILD"]:
             return "Aunt/Uncle", "Niece/Nephew"
@@ -251,6 +253,17 @@ async def u_graph(target: discord.User | discord.Member):
     if t_parent is not None:
         add_node(Node(t_parent.user_name, NodeType.PARENT))
         add_edge(Edge(d_target.user_name, t_parent.user_name, EdgeType.CHILD))
+
+        tt_partners: list[User] = await t_parent.partners.all()
+        tt_children: list[User] = await t_parent.children.all()
+
+        for tt_partner in tt_partners:
+            add_node(Node(tt_partner.user_name, NodeType.PARTNER))
+            add_edge(Edge(t_parent.user_name, tt_partner.user_name, EdgeType.PARTNER))
+
+        for tt_child in tt_children:
+            add_node(Node(tt_child.user_name, NodeType.CHILD))
+            add_edge(Edge(tt_child.user_name, t_parent.user_name, EdgeType.CHILD))
 
     for t_partner in t_partners:
         add_node(Node(t_partner.user_name, NodeType.PARTNER))

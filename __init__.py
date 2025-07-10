@@ -1,5 +1,6 @@
 import logging
 import os
+from itertools import groupby
 
 import discord
 import time
@@ -57,7 +58,7 @@ async def embed_marry(invoker: Member, target: Member):
     partner_count = int(len(partners) / 2)
     children_count = len(children)
 
-    timestamp = int(time.time()) + 60
+    timestamp = int(time.time()) + 60*5
 
     embed = Embed(colour=Colour.random(), title=f"{target.nick if target.nick is not None else target.name}, {invoker.nick if invoker.nick is not None else invoker.name} longs for you.")
     embed.description = (f"Will you make them your partner? <:UwU_GT:1278010153806987317>\n"
@@ -91,7 +92,7 @@ async def embed_adopt(invoker: Member, target: Member):
     partner_count = int(len(partners) / 2)
     children_count = len(children)
 
-    timestamp = int(time.time()) + 60
+    timestamp = int(time.time()) + 60*5
 
     embed = Embed(colour=Colour.random(), title=f"{target.nick if target.nick is not None else target.name}, {invoker.nick if invoker.nick is not None else invoker.name} wants to adopt you.")
     embed.description = (f"Will you become their adopted child? <:UwU_GT:1278010153806987317>\n"
@@ -111,6 +112,40 @@ async def embed_graph(invoker: Member, target: Member):
     embed.set_image(url=f"attachment://{target.id}-{graph_uid}.png")
 
     return embed, file
+
+
+async def embed_info(target: Member):
+    u_target = await read_or_create_user(user_id=target.id)
+    parent = await u_target.parent.single()
+    partners = [k for k, v in groupby(sorted(await u_target.partners.all(), key=lambda x: x.user_id))]
+    children = [k for k, v in groupby(sorted(await u_target.children.all(), key=lambda x: x.user_id))]
+
+    partner_count = len(partners)
+    children_count = len(children)
+
+    embed = Embed(colour=Colour.random(), title=f"{target.nick if target.nick is not None else target.name}")
+    embed.description = f"Has {partner_count} partners and {children_count} children.\n{"Has a parent." if parent is not None else "Is orphan."}"
+    embed.set_thumbnail(url=target.avatar.url)
+
+    lines = []
+    if parent is not None:
+        lines.append(f"**Parent:** `{parent.user_name}`.")
+
+        siblings = [k for k, v in groupby(sorted(await parent.children.all(), key=lambda x: x.user_id))]
+        siblings = filter(lambda x: x.user_id != target.id, siblings)
+        siblings = [f"`{x.user_name}`" for x in siblings]
+
+        lines.append(f"**Siblings:** {', '.join(siblings)}.")
+
+    if partner_count > 0:
+        partners = [f"`{x.user_name}`" for x in partners]
+        lines.append(f"**Partners:** {', '.join(partners)}.")
+
+    if children_count > 0:
+        children = [f"`{x.user_name}`" for x in children]
+        lines.append(f"**Children:** {', '.join(children)}.")
+
+    return embed, '\n'.join(lines)
 
 
 @bot.event
@@ -177,21 +212,44 @@ async def abandon(interaction: Interaction, child: Member):
 @bot.tree.command(name="graph", description="Get your or a user's family graph")
 @app_commands.describe(user="Whose graph you want to see")
 async def graph(interaction: Interaction, user: Member = None):
+    # Command may take longer than 5 seconds
+    await interaction.response.defer()
+
     embed, file = await embed_graph(invoker=interaction.user, target=interaction.user if user is None else user)
 
-    await interaction.response.send_message(embed=embed, file=file)
+    await interaction.edit_original_response(embed=embed, attachments=[file])
 
 
 @bot.tree.command(name="relate", description="Get how user_a (default = you) is related to user_b")
 @app_commands.describe(user_a="First user")
 @app_commands.describe(user_b="Second user")
 async def relate(interaction: Interaction, user_b: Member, user_a: Member = None):
+    # Command may take longer than 5 seconds
+    await interaction.response.defer()
+
     if user_a is None:
         user_a = interaction.user
 
     path, relationship = await u_relation_between(invoker=user_a, target=user_b)
 
-    await interaction.response.send_message(content=f"{user_a.nick if user_a.nick is not None else user_a.name} is {user_b.nick if user_b.nick is not None else user_b.name}'s {relationship[0].lower()}.\n-# {path}")
+    await interaction.edit_original_response(content=f"{user_a.nick if user_a.nick is not None else user_a.name} is {user_b.nick if user_b.nick is not None else user_b.name}'s {relationship[0].lower()}.\n-# {path}")
+
+
+@bot.tree.command(name="info", description="Show a your or user's information, including immediate family (parent, partners, children)")
+@app_commands.describe(user="The user you wanna see")
+async def info(interaction: Interaction, user: Member = None):
+    #Command may take longer than 5 seconds
+    await interaction.response.defer()
+
+    if user is None:
+        user = interaction.user
+
+    embed, message = await embed_info(user)
+
+    await interaction.edit_original_response(embed=embed)
+
+    if len(message) > 1:
+        await interaction.followup.send(message)
 
 discord_logger = logging.getLogger('discord')
 discord_logger.setLevel('DEBUG')

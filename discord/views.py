@@ -133,8 +133,8 @@ class PublicView(discord.ui.View):
 
 
 class MarryView(BaseView):
-    def __init__(self, user: discord.User | discord.Member, invoker: discord.User | discord.Member, callback):
-        super().__init__(user=user, timeout=60)
+    def __init__(self, user: discord.User | discord.Member, invoker: discord.User | discord.Member, callback, timeout: float = 300.0):
+        super().__init__(user=user, timeout=timeout)
         self.callback = callback
         self.user = user
 
