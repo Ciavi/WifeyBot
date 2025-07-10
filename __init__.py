@@ -234,6 +234,7 @@ async def relate(interaction: Interaction, user_b: Member, user_a: Member = None
 
     if path == "UNRELATED":
         await interaction.edit_original_response(content=f"{user_a.nick if user_a.nick is not None else user_a.name} and {user_b.nick if user_b.nick is not None else user_b.name} are {relationship[0].lower()}.\n-# {path}")
+        return
 
     await interaction.edit_original_response(content=f"{user_a.nick if user_a.nick is not None else user_a.name} is {user_b.nick if user_b.nick is not None else user_b.name}'s {relationship[0].lower()}.\n-# {path}")
 
