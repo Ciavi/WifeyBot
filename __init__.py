@@ -274,7 +274,7 @@ class OmegaType(enum.Enum):
 @bot.tree.command(name="omegaverse", description="A brainrot enhancement. Pheromone-based™. One time use, be truthful UwU.")
 @app_commands.describe(otype="Are you an alpha, a beta or an omega? OwO")
 @app_commands.describe(subtype="Subtype, if available.")
-async def omega(interaction: Interaction, otype: OmegaType, subtype: str = ""):
+async def omegaverse(interaction: Interaction, otype: OmegaType, subtype: str = ""):
     user = await read_or_create_user(user_id=interaction.user.id)
 
     if user.user_omega is False or None:
@@ -282,7 +282,7 @@ async def omega(interaction: Interaction, otype: OmegaType, subtype: str = ""):
         await update_or_create_user(user_id=interaction.user.id, user_omega=True)
         return
 
-    if user.user_omega is True and user.user_omega:
+    if user.user_omega is True and user.user_otype:
         await interaction.response.send_message(f"This command is one-time only. UwU", ephemeral=True)
         return
 
