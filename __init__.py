@@ -34,8 +34,8 @@ logger = system.historian.Logging(configuration)
 bot = commands.Bot(command_prefix='$', intents=intents)
 
 async def setup_hook():
-    await bot.tree.sync()
     await bot.add_cog(AdminGroup(bot))
+    await bot.tree.sync()
 
 bot.setup_hook = setup_hook
 
@@ -299,11 +299,13 @@ async def is_bot_owner(interaction: Interaction):
     return await bot.is_owner(interaction.user)
 
 
-class AdminGroup(commands.GroupCog, name="admin", description="Administrative commands"):
+class AdminGroup(commands.GroupCog):
+    group = app_commands.Group(name="admin", description="Administrative commands")
+
     def __init__(self, client: commands.Bot):
         self.bot = client
 
-    @app_commands.command(name="stats", description="Show bot statistics and status")
+    @group.command(name="stats", description="Show bot statistics and status")
     @app_commands.check(is_bot_owner)
     async def stats(self, interaction: Interaction):
         uptime = datetime.now() - start_time
@@ -314,7 +316,7 @@ class AdminGroup(commands.GroupCog, name="admin", description="Administrative co
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    @app_commands.command(name="set_user", description="Set a user's attribute")
+    @group.command(name="set_user", description="Set a user's attribute")
     @app_commands.check(is_bot_owner)
     @app_commands.describe(user="The user you wanna edit")
     @app_commands.describe(attribute="The attribute you wanna change")
@@ -325,7 +327,7 @@ class AdminGroup(commands.GroupCog, name="admin", description="Administrative co
 
         await interaction.response.send_message(f"Set {attribute} to {value} for user {user.mention}.", ephemeral=True)
 
-    @app_commands.command(name="del_user", description="Delete a user")
+    @group.command(name="del_user", description="Delete a user")
     @app_commands.check(is_bot_owner)
     @app_commands.describe(user="The user you wanna delete")
     async def del_user(self, interaction: Interaction, user: Member):
