@@ -16,8 +16,6 @@ async def read_or_create_user(user_id: int, **kwargs):
     dict_param = { 'user_id': user_id }
     dict_param.update(kwargs)
 
-    print(dict_param)
-
     record: list[User] = await User.get_or_create(dict_param)
 
     return record[0]
@@ -26,8 +24,6 @@ async def read_or_create_user(user_id: int, **kwargs):
 async def update_or_create_user(user_id: int, **kwargs):
     dict_param = {'user_id': user_id }
     dict_param.update(kwargs)
-
-    print(dict_param)
 
     record: list[User] = await User.create_or_update(dict_param)
 
