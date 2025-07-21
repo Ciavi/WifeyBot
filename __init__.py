@@ -282,7 +282,7 @@ async def omega(interaction: Interaction, otype: OmegaType, subtype: str = ""):
         await update_or_create_user(user_id=interaction.user.id, user_omega=True)
         return
 
-    await update_or_create_user(user_id=interaction.user.id, user_otype=otype, user_osub=subtype)
+    await update_or_create_user(user_id=interaction.user.id, user_otype=otype.value, user_osub=subtype)
     await interaction.response.send_message(f"Updated. Welcome to the brainrot, ***{otype.value}***.")
 
 
