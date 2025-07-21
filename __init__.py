@@ -282,6 +282,10 @@ async def omega(interaction: Interaction, otype: OmegaType, subtype: str = ""):
         await update_or_create_user(user_id=interaction.user.id, user_omega=True)
         return
 
+    if user.user_omega is True and user.user_omega:
+        await interaction.response.send_message(f"This command is one-time only. UwU", ephemeral=True)
+        return
+
     await update_or_create_user(user_id=interaction.user.id, user_otype=otype.value, user_osub=subtype)
     await interaction.response.send_message(f"Updated. Welcome to the brainrot, ***{otype.value}***.")
 
