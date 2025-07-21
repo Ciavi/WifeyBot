@@ -279,6 +279,7 @@ async def omega(interaction: Interaction, otype: OmegaType, subtype: str = ""):
 
     if user.user_omega is False or None:
         await interaction.response.send_message(f"This is your first time running this command. Do [this test](https://www.quotev.com/quiz/15192538/Accurate-Omegaverse-Quiz-100-Guarantee) and then run this command. Be honest OwO")
+        await update_or_create_user(user_id=interaction.user.id, user_omega=True)
         return
 
     await update_or_create_user(user_id=interaction.user.id, user_otype=otype, user_osub=subtype)
