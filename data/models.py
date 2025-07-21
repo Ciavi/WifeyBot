@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from neomodel import IntegerProperty, StringProperty, DateTimeProperty, AsyncStructuredRel, \
-    AsyncStructuredNode, AsyncRelationshipTo, AsyncRelationshipFrom, AsyncRelationship, config, AsyncZeroOrOne
+    AsyncStructuredNode, AsyncRelationshipTo, AsyncRelationshipFrom, AsyncRelationship, config, AsyncZeroOrOne, \
+    BooleanProperty
 from os import environ as env
 
 load_dotenv()
@@ -17,6 +18,9 @@ class ProperRelationship(AsyncStructuredRel):
 class User(AsyncStructuredNode):
     user_id = IntegerProperty(required=True, unique_index=True)
     user_name = StringProperty()
+    user_omega = BooleanProperty(default=False)
+    user_otype = StringProperty()
+    user_osub = StringProperty()
 
     partners = AsyncRelationship('User', 'IS_PARTNER_WITH', model=ProperRelationship)
 
