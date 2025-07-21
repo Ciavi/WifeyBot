@@ -35,6 +35,7 @@ bot = commands.Bot(command_prefix='$', intents=intents)
 
 async def setup_hook():
     await bot.tree.sync()
+    await bot.add_cog(AdminGroup(bot))
 
 bot.setup_hook = setup_hook
 
@@ -297,12 +298,12 @@ async def is_bot_owner(interaction: Interaction):
     return await bot.is_owner(interaction.user)
 
 
-class Admin(commands.GroupCog):
+class AdminGroup(commands.GroupCog, name="admin", description="Administrative commands"):
     def __init__(self, client: commands.Bot):
         self.bot = client
 
-    @bot.tree.command(name="stats", description="Show bot statistics and status")
-    @bot.check(is_bot_owner)
+    @app_commands.command(name="stats", description="Show bot statistics and status")
+    @app_commands.check(is_bot_owner)
     async def stats(self, interaction: Interaction):
         uptime = datetime.now() - start_time
 
@@ -312,8 +313,8 @@ class Admin(commands.GroupCog):
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
-    @bot.tree.command(name="set_user", description="Set a user's attribute")
-    @bot.check(is_bot_owner)
+    @app_commands.command(name="set_user", description="Set a user's attribute")
+    @app_commands.check(is_bot_owner)
     @app_commands.describe(user="The user you wanna edit")
     @app_commands.describe(attribute="The attribute you wanna change")
     @app_commands.describe(value="The new value")
@@ -323,8 +324,8 @@ class Admin(commands.GroupCog):
 
         await interaction.response.send_message(f"Set {attribute} to {value} for user {user.mention}.", ephemeral=True)
 
-    @bot.tree.command(name="del_user", description="Delete a user")
-    @bot.check(is_bot_owner)
+    @app_commands.command(name="del_user", description="Delete a user")
+    @app_commands.check(is_bot_owner)
     @app_commands.describe(user="The user you wanna delete")
     async def del_user(self, interaction: Interaction, user: Member):
         await delete_user(user_id=user.id)
