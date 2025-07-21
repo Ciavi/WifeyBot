@@ -326,8 +326,7 @@ class AdminGroup(commands.GroupCog):
     @app_commands.describe(attribute="The attribute you wanna change")
     @app_commands.describe(value="The new value")
     async def set_user(self, interaction: Interaction, user: Member, attribute: UserAttribute, value: str):
-        kwargs = { f"{attribute.value}": value }
-        await update_or_create_user(user_id=user.id, kwargs=kwargs)
+        await update_or_create_user(user_id=user.id, **{ f"{attribute.value}": value })
 
         await interaction.response.send_message(f"Set {attribute.value} to {value} for user {user.mention}.", ephemeral=True)
 
