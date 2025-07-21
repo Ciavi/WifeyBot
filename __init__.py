@@ -1,10 +1,13 @@
+import enum
 import logging
 import os
+import platform
+from datetime import datetime
 from itertools import groupby
 
 import discord
 import time
-from discord import app_commands, Interaction, Member, Embed, Colour, File
+from discord import app_commands, Interaction, Member, Embed, Colour, File, Permissions
 
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -13,10 +16,12 @@ from os import environ as env
 import system.configuration
 import system.historian
 from data.interface import u_marry, read_or_create_user, u_divorce, u_emancipate, u_abandon, u_adopt, u_are_related, \
-    u_has_parent, u_graph, u_graph, u_relation_between
+    u_has_parent, u_graph, u_graph, u_relation_between, update_or_create_user, delete_user
 from discord.views import MarryView
 
 load_dotenv()
+
+start_time = datetime.now()
 
 intents = discord.Intents.default()
 intents.members = True
@@ -126,6 +131,9 @@ async def embed_info(target: Member):
     embed = Embed(colour=Colour.random(), title=f"{target.nick if target.nick is not None else target.name}")
     embed.description = f"Has {partner_count} partners and {children_count} children.\n{"Has a parent." if parent is not None else "Is orphan."}"
     embed.set_thumbnail(url=target.avatar.url)
+
+    if u_target.user_omega and u_target.user_otype:
+        embed.add_field(name="Type", value=f"{u_target.user_otype} ({u_target.user_osub or "N/A"})")
 
     lines = []
     if parent is not None:
@@ -254,6 +262,75 @@ async def info(interaction: Interaction, user: Member = None):
 
     if len(message) > 1:
         await interaction.followup.send(message)
+
+
+class OmegaType(enum.Enum):
+    Alpha = "Alpha"
+    Beta = "Beta"
+    Omega = "Omega"
+
+
+@bot.tree.command(name="omegaverse", description="A brainrot enhancement. Pheromone-based™. One time use, be truthful UwU.")
+@app_commands.describe(otype="Are you an alpha, a beta or an omega? OwO")
+@app_commands.describe(subtype="Subtype, if available.")
+async def omega(interaction: Interaction, otype: OmegaType, subtype: str = ""):
+    user = await read_or_create_user(user_id=interaction.user.id)
+
+    if user.user_omega is False or None:
+        await interaction.response.send_message(f"This is your first time running this command. Do [this test](https://www.quotev.com/quiz/15192538/Accurate-Omegaverse-Quiz-100-Guarantee) and then run this command. Be honest OwO")
+        return
+
+    await update_or_create_user(user_id=interaction.user.id, user_otype=otype, user_osub=subtype)
+    await interaction.response.send_message(f"Updated. Welcome to the brainrot, ***{otype}***.")
+
+
+# Owner section :D, Owner only
+
+class UserAttribute(enum.Enum):
+    Name = "user_name"
+    Omega = "user_omega"
+    OmegaverseType = "user_otype"
+    OmegaverseSub = "user_osub"
+
+
+async def is_bot_owner(interaction: Interaction):
+    return await bot.is_owner(interaction.user)
+
+
+class Admin(commands.GroupCog):
+    def __init__(self, client: commands.Bot):
+        self.bot = client
+
+    @bot.tree.command(name="stats", description="Show bot statistics and status")
+    @bot.check(is_bot_owner)
+    async def stats(self, interaction: Interaction):
+        uptime = datetime.now() - start_time
+
+        embed = Embed(title="Statistics", colour=discord.Colour.random())
+        embed.add_field(name="Uptime", value=f"{str(uptime)}")
+        embed.add_field(name="System", value=f"{platform.platform()}")
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @bot.tree.command(name="set_user", description="Set a user's attribute")
+    @bot.check(is_bot_owner)
+    @app_commands.describe(user="The user you wanna edit")
+    @app_commands.describe(attribute="The attribute you wanna change")
+    @app_commands.describe(value="The new value")
+    async def set_user(self, interaction: Interaction, user: Member, attribute: UserAttribute, value: str):
+        kwargs = { f"{attribute}": value }
+        await update_or_create_user(user_id=user.id, kwargs=kwargs)
+
+        await interaction.response.send_message(f"Set {attribute} to {value} for user {user.mention}.", ephemeral=True)
+
+    @bot.tree.command(name="del_user", description="Delete a user")
+    @bot.check(is_bot_owner)
+    @app_commands.describe(user="The user you wanna delete")
+    async def del_user(self, interaction: Interaction, user: Member):
+        await delete_user(user_id=user.id)
+
+        await interaction.response.send_message(f"Deleted {user.mention} from database.")
+
 
 discord_logger = logging.getLogger('discord')
 discord_logger.setLevel('DEBUG')
