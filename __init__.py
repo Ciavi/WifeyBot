@@ -40,13 +40,7 @@ async def setup_hook():
 bot.setup_hook = setup_hook
 
 
-async def callback_marry(interaction: Interaction):
-    b_marry: bool = True if str(interaction.data["custom_id"].split(":")[0]) == "yes" else False
-    invoker_id: int = int(interaction.data["custom_id"].split(":")[1])
-    invoker = bot.get_user(invoker_id)
-
-    await interaction.message.edit(view=None)
-
+async def callback_marry(interaction: Interaction, b_marry: bool, invoker: Member):
     if b_marry:
         await u_marry(invoker=invoker, target=interaction.user)
         await interaction.response.send_message(content=f"Congratulations to {invoker.mention} and {interaction.user.mention} on their marriage!")
@@ -74,13 +68,7 @@ async def embed_marry(invoker: Member, target: Member):
     return embed, view
 
 
-async def callback_adopt(interaction: Interaction):
-    b_adopt: bool = True if str(interaction.data["custom_id"].split(":")[0]) == "yes" else False
-    invoker_id: int = int(interaction.data["custom_id"].split(":")[1])
-    invoker = bot.get_user(invoker_id)
-
-    await interaction.message.edit(view=None)
-
+async def callback_adopt(interaction: Interaction, b_adopt: bool, invoker: Member):
     if b_adopt:
         await u_adopt(invoker=invoker, target=interaction.user)
         await interaction.response.send_message(content=f"Congratulations to {invoker.mention} and {interaction.user.mention} on the adoption!")

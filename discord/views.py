@@ -137,14 +137,21 @@ class MarryView(BaseView):
         super().__init__(user=user, timeout=timeout)
         self.callback = callback
         self.user = user
-
-        self.add_item(discord.ui.Button(label="Yes!", style=discord.ButtonStyle.success, custom_id=f"yes:{invoker.id}"))
-        self.add_item(discord.ui.Button(label="No :(", style=discord.ButtonStyle.danger, custom_id=f"no:{invoker.id}"))
+        self.invoker = invoker
 
         for child in self.children:
             child.callback = self.callback
 
+    @discord.ui.button(label="Yes!", style=discord.ButtonStyle.success)
+    async def yes(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.disable()
+        await self.callback(interaction, True, self.invoker)
 
-    async def disable(self):
+    @discord.ui.button(label="No :(", style=discord.ButtonStyle.danger)
+    async def yes(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.disable()
+        await self.callback(interaction, True, self.invoker)
+
+    def disable(self):
         self._disable_all()
 
