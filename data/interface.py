@@ -214,6 +214,7 @@ class EdgeType(enum.IntEnum):
 class Node:
     label: str
     type: NodeType
+    otype: str = None
 
 
 @dataclass(frozen=True)
@@ -248,45 +249,46 @@ async def u_graph(target: discord.User | discord.Member):
     t_children: list[User] = await d_target.children.all()
     t_parent: User = await d_target.parent.single()
 
-    add_node(Node(d_target.user_name, NodeType.SELF))
+    add_node(Node(d_target.user_name, NodeType.SELF, d_target.user_otype))
 
     if t_parent is not None:
-        add_node(Node(t_parent.user_name, NodeType.PARENT))
+        add_node(Node(t_parent.user_name, NodeType.PARENT, t_parent.user_otype))
         add_edge(Edge(d_target.user_name, t_parent.user_name, EdgeType.CHILD))
 
         tt_partners: list[User] = await t_parent.partners.all()
         tt_children: list[User] = await t_parent.children.all()
 
         for tt_partner in tt_partners:
-            add_node(Node(tt_partner.user_name, NodeType.PARTNER))
+            add_node(Node(tt_partner.user_name, NodeType.PARTNER, tt_partner.user_otype))
             add_edge(Edge(t_parent.user_name, tt_partner.user_name, EdgeType.PARTNER))
 
         for tt_child in tt_children:
-            add_node(Node(tt_child.user_name, NodeType.CHILD))
+            add_node(Node(tt_child.user_name, NodeType.CHILD, tt_child.user_otype))
             add_edge(Edge(tt_child.user_name, t_parent.user_name, EdgeType.CHILD))
 
     for t_partner in t_partners:
-        add_node(Node(t_partner.user_name, NodeType.PARTNER))
+        add_node(Node(t_partner.user_name, NodeType.PARTNER, t_partner.user_otype))
         add_edge(Edge(d_target.user_name, t_partner.user_name, EdgeType.PARTNER))
 
         tt_partners: list[User] = await t_partner.partners.all()
         tt_children: list[User] = await t_partner.children.all()
 
         for tt_partner in tt_partners:
-            add_node(Node(tt_partner.user_name, NodeType.PARTNER))
+            add_node(Node(tt_partner.user_name, NodeType.PARTNER, tt_partner.user_otype))
             add_edge(Edge(t_partner.user_name, tt_partner.user_name, EdgeType.PARTNER))
 
         for tt_child in tt_children:
-            add_node(Node(tt_child.user_name, NodeType.CHILD))
+            add_node(Node(tt_child.user_name, NodeType.CHILD, tt_child.user_otype))
             add_edge(Edge(tt_child.user_name, t_partner.user_name, EdgeType.CHILD))
 
     for t_child in t_children:
-        add_node(Node(t_child.user_name, NodeType.CHILD))
+        add_node(Node(t_child.user_name, NodeType.CHILD, t_child.user_otype))
         add_edge(Edge(t_child.user_name, d_target.user_name, EdgeType.CHILD))
 
     graph = networkx.MultiDiGraph()
     for label, node in node_table.items():
-        graph.add_node(label, type=node.type.name)
+        otype: str = "A" if node.otype == "Alpha" else "Β" if node.otype == "Beta" else "Ω" if node.type == "Omega" else None
+        graph.add_node(f"{otype + ": " if otype is not None else ""}{label}", type=node.type.name, otype=otype)
     for (f, t), edge in edge_table.items():
         graph.add_edge(f, t, type=edge.type.name)
 
