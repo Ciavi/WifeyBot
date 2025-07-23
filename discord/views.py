@@ -148,9 +148,9 @@ class MarryView(BaseView):
         await self.callback(interaction, True, self.invoker)
 
     @discord.ui.button(label="No :(", style=discord.ButtonStyle.danger)
-    async def yes(self, interaction: discord.Interaction, button: discord.ui.Button):
+    async def no(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.disable()
-        await self.callback(interaction, True, self.invoker)
+        await self.callback(interaction, False, self.invoker)
 
     def disable(self):
         self._disable_all()
