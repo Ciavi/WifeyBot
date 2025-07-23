@@ -287,7 +287,7 @@ async def u_graph(target: discord.User | discord.Member):
 
     graph = networkx.MultiDiGraph()
     for label, node in node_table.items():
-        otype: str = "A" if node.otype == "Alpha" else "Β" if node.otype == "Beta" else "Ω" if node.type == "Omega" else None
+        otype: str = f"&{node.otype.capitalize()};" if node.otype is not None else None
         graph.add_node(label, type=node.type.name, otype=otype)
     for (f, t), edge in edge_table.items():
         graph.add_edge(f, t, type=edge.type.name)
