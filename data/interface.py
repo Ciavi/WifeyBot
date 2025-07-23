@@ -288,7 +288,7 @@ async def u_graph(target: discord.User | discord.Member):
     graph = networkx.MultiDiGraph()
     for label, node in node_table.items():
         otype: str = "A" if node.otype == "Alpha" else "Β" if node.otype == "Beta" else "Ω" if node.type == "Omega" else None
-        graph.add_node(f"{otype + ": " if otype is not None else ""}{label}", type=node.type.name, otype=otype)
+        graph.add_node(label, type=node.type.name, otype=otype)
     for (f, t), edge in edge_table.items():
         graph.add_edge(f, t, type=edge.type.name)
 
@@ -319,7 +319,11 @@ async def u_graph(target: discord.User | discord.Member):
     for node in pdot.get_nodes():
         node_name = node.get_name().strip()
         node_type = graph.nodes[node_name].get("type", "SELF")
+        node_otype = graph.nodes[node_name].get("otype", None)
         style = node_styles.get(node_type)
+
+        if node_otype is not None:
+            node.set("label", f"{node_name}\n{node_otype}")
 
         node.set("shape", "circle")
         node.set("penwidth", 2.0)
