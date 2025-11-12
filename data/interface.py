@@ -90,7 +90,7 @@ async def u_abandon(invoker: discord.User | discord.Member, target: discord.User
 
 async def u_emancipate(invoker: discord.User | discord.Member):
     d_invoker: User = await update_or_create_user(user_id=invoker.id, user_name=invoker.name)
-    d_target: User = await d_invoker.parent.end_node()
+    d_target: User = await d_invoker.parent.single()
 
     await d_invoker.children.disconnect(d_target)
     await d_target.parent.disconnect(d_invoker)
